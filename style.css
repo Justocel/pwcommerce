@@ -1,0 +1,10 @@
+/* la cascada aplica para todos los h1
+/* como es cascada, aplica en orden de arriba a abajo, por eso el h1 de abajo es el que se aplica/
+/**************/
+
+.cuerpo{
+    background-color: #fe3031;
+    font-family: Arial, sans-serif;
+    color: #fafafa;
+    padding: 20px;
+}
