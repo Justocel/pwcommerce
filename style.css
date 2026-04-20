@@ -6,13 +6,18 @@
     background-color: #fe3031;
     font-family: Arial, sans-serif;
     color: #fafafa;
-    padding: 20px;
+    padding: 30px 20px;
     text-align: center;
+    position: relative;
+    overflow: hidden;
 }
 
-.cuerpo img {
-    display: block;
-    margin: 0 auto;
+/* Header Video - Removed */
+
+.cuerpo h2,
+.cuerpo h1 {
+    position: relative;
+    z-index: 2;
 }
 
 .subheader {
@@ -21,12 +26,12 @@
     top: 0;
     z-index: 10;
     background: #fe3031;
-    border-bottom: 1px solid #ddd;
     padding: 12px 16px;
     display: flex;
     gap: 12px;
     flex-wrap: wrap;
     justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
 .subheader a {
@@ -45,11 +50,27 @@
 }
 
 .seccion-placeholder {
-    min-height: 70vh;
-    padding: 20px;
+    min-height: 600px;
+    padding: 60px 20px 40px 20px;
     background-color: #fe3031;
     color: #fafafa;
     text-align: center;
+}
+
+.seccion-final {
+    padding-bottom: 60px;
+}
+
+.seccion-header {
+    margin-bottom: 40px;
+}
+
+.seccion-descripcion {
+    font-size: 1.2em;
+    color: #fafafa;
+    margin-top: 10px;
+    font-style: italic;
+    font-weight: 300;
 }
 
 .seccion-placeholder h2 {
@@ -63,20 +84,23 @@ h1, h2 {
 
 .cuerpo h2 {
     color: #fafafa;
-    font-size: 3em;
+    font-size: 3.5em;
     margin-top: 20px;
+    margin-bottom: 5px;
 }
 
 .cuerpo h1 {
     color: #fafafa;
     font-size: 3em;
     margin-top: 10px;
+    margin-bottom: 0;
 }
 
 .seccion-placeholder h1 {
     color: #fafafa;
-    font-size: 2em;
+    font-size: 2.5em;
     margin-top: 0;
+    margin-bottom: 5px;
 }
 
 .eventos-container {
@@ -89,18 +113,24 @@ h1, h2 {
 }
 
 .evento {
-    flex: 0 0 300px;
+    flex: 0 0 280px;
     scroll-snap-align: start;
     text-align: center;
     position: relative;
     background: #f9f9f9;
-    padding: 10px;
+    padding: 15px;
     border-radius: 8px;
+    transition: transform 0.2s;
+}
+
+.evento:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 
 .flyer {
-    width: 200px;
-    height: 300px;
+    width: 100%;
+    height: 280px;
     object-fit: cover;
     border-radius: 4px;
 }
@@ -169,6 +199,10 @@ html {
 
 footer {
     text-align: center;
+    background-color: #fe3031;
+    color: #fafafa;
+    padding: 20px;
+    margin-top: 40px;
 }
 
 /* Revistas */
@@ -206,17 +240,23 @@ footer {
 .integrante {
     display: flex;
     align-items: center;
-    padding: 20px;
-    background: linear-gradient(to right, rgba(254,48,49,0) 0%, rgba(254,48,49,0.8) 50%);
+    padding: 25px;
+    background: linear-gradient(to right, rgba(254,48,49,0.2) 0%, rgba(254,48,49,0.5) 50%);
     border-radius: 8px;
+    transition: transform 0.2s;
+}
+
+.integrante:hover {
+    transform: translateX(10px);
 }
 
 .integrante img {
-    width: 100px;
-    height: 100px;
-    margin-right: 20px;
+    width: 120px;
+    height: 120px;
+    margin-right: 30px;
     border-radius: 50%;
     object-fit: cover;
+    border: 3px solid #fafafa;
 }
 
 .info h3 {
@@ -229,4 +269,31 @@ footer {
     margin: 5px 0 0 0;
     color: #fafafa;
 }
+
+/* Hero Section */
+.seccion-hero {
+    height: 50vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    background-color: #fe3031;
+}
+
+.hero-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    z-index: 1;
+}
+
+.seccion-hero::before {
+    display: none;
+}
+
+/* Removed - hero content styles */
 
