@@ -4,6 +4,19 @@
    para fácil mantenimiento en React
    =================================== */
 
+   @font-face {
+  font-family: 'Alte Haas Grotesk';
+  src: url('AlteHaasGroteskRegular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Alte Haas Grotesk';
+  src: url('AlteHaasGroteskBold.ttf') format('truetype');
+  font-weight: 700;
+}
+
 :root {
     /* COLORES PRINCIPALES */
     --color-primary: #fe3031;
@@ -14,8 +27,9 @@
     --color-gray: #666;
     --color-bg-light: #f9f9f9;
     
+    
     /* FUENTES */
-    --font-family: Arial, sans-serif;
+    --font-family: 'Alte Haas Grotesk',Arial, sans-serif;
     --font-size-xs: 0.8em;
     --font-size-sm: 1.1em;
     --font-size-base: 1.2em;
@@ -25,6 +39,8 @@
     --font-size-3xl: 3em;
     --font-size-4xl: 3.5em;
     --font-size-5xl: 4em;
+    
+    
     
     /* ESPACIADO */
     --spacing-xs: 5px;
@@ -88,6 +104,7 @@
 }
 
 .subheader a {
+    font-family: var(--font-family);
     text-decoration: none;
     color: var(--color-dark);
     background: var(--color-primary);
@@ -119,7 +136,7 @@
 }
 
 .seccion-descripcion {
-    font-size: var(--font-size-base);
+    font: var(--font-size-base) var(--font-family);
     color: var(--color-light);
     margin-top: var(--spacing-md);
     font-style: italic;
@@ -131,27 +148,27 @@
 }
 
 h1, h2 {
-    font-family: Arial, sans-serif;
+    font: var(--font-size-lg) var(--font-family);
     text-align: center;
 }
 
 .cuerpo h2 {
     color: var(--color-light);
-    font-size: var(--font-size-4xl);
+    font: var(--font-size-4xl) var(--font-family);
     margin-top: var(--spacing-lg);
     margin-bottom: var(--spacing-xs);
 }
 
 .cuerpo h1 {
     color: var(--color-light);
-    font-size: var(--font-size-3xl);
+    font: var(--font-size-3xl) var(--font-family);
     margin-top: var(--spacing-md);
     margin-bottom: 0;
 }
 
 .seccion-placeholder h1 {
     color: var(--color-light);
-    font-size: var(--font-size-2xl);
+    font: var(--font-size-2xl) var(--font-family);
     margin-top: 0;
     margin-bottom: var(--spacing-xs);
 }
@@ -168,9 +185,10 @@ h1, h2 {
 .evento {
     flex: 0 0 280px;
     scroll-snap-align: start;
+    color: var(--color-dark);
     text-align: center;
     position: relative;
-    background: var(--color-bg-light);
+    background: var(--color-secondary);
     padding: var(--spacing-lg);
     border-radius: var(--radius-md);
     transition: transform var(--transition-fast);
@@ -189,12 +207,13 @@ h1, h2 {
 }
 
 .evento-nombre {
-    font-weight: bold;
+    font: var(--font-size-lg) var(--font-family) var(--font-weight-bold);
     margin: var(--spacing-md) 0 var(--spacing-xs);
+    color: var(--color-light);
 }
 
 .evento-fecha {
-    color: var(--color-gray);
+    color: var(--color-light);
     margin: var(--spacing-xs) 0;
 }
 
@@ -203,7 +222,7 @@ h1, h2 {
     top: var(--spacing-md);
     right: var(--spacing-md);
     background: var(--color-primary);
-    color: white;
+    color: var(--color-light);
     padding: var(--spacing-xs) var(--spacing-sm);
     border-radius: var(--radius-sm);
     font-size: var(--font-size-xs);
