@@ -161,28 +161,28 @@ export const integrantes = [
   {
     id: 1,
     nombre: 'Juan',
-    image: 'Integrantes/Juan.png',
+    image: 'Integrantes/juan.jpg',
     descripcion: 'Descripción de Juan.',
     rol: 'Rol de Juan', // placeholder para futuro
   },
   {
     id: 2,
     nombre: 'Eva',
-    image: 'Integrantes/Eva.png',
+    image: 'Integrantes/eva.jpg',
     descripcion: 'Descripción de Eva.',
     rol: 'Rol de Eva',
   },
   {
     id: 3,
     nombre: 'Mey',
-    image: 'Integrantes/Mey.png',
+    image: 'Integrantes/mey.jpg',
     descripcion: 'Descripción de Mey.',
     rol: 'Rol de Mey',
   },
   {
     id: 4,
     nombre: 'Vic',
-    image: 'Integrantes/Vic.png',
+    image: 'Integrantes/vic.jpg',
     descripcion: 'Descripción de Vic.',
     rol: 'Rol de Vic',
   },
