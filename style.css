@@ -1,12 +1,65 @@
+/* ===================================
+   VARIABLES CSS - DISEÑO TOKENS
+   Centraliza colores, tamaños y espacios
+   para fácil mantenimiento en React
+   =================================== */
+
+:root {
+    /* COLORES PRINCIPALES */
+    --color-primary: #fe3031;
+    --color-primary-dark: #cc2929;
+    --color-secondary: #98002b;
+    --color-light: #fafafa;
+    --color-dark: #333;
+    --color-gray: #666;
+    --color-bg-light: #f9f9f9;
+    
+    /* FUENTES */
+    --font-family: Arial, sans-serif;
+    --font-size-xs: 0.8em;
+    --font-size-sm: 1.1em;
+    --font-size-base: 1.2em;
+    --font-size-lg: 1.5em;
+    --font-size-xl: 1.8em;
+    --font-size-2xl: 2.5em;
+    --font-size-3xl: 3em;
+    --font-size-4xl: 3.5em;
+    --font-size-5xl: 4em;
+    
+    /* ESPACIADO */
+    --spacing-xs: 5px;
+    --spacing-sm: 8px;
+    --spacing-md: 12px;
+    --spacing-lg: 20px;
+    --spacing-xl: 30px;
+    --spacing-2xl: 40px;
+    --spacing-3xl: 60px;
+    
+    /* BORDER RADIUS */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-full: 50%;
+    
+    /* SOMBRAS */
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.2);
+    --shadow-md: 0 4px 15px rgba(0,0,0,0.2);
+    --shadow-lg: 0 6px 20px rgba(0,0,0,0.3);
+    --shadow-xl: 0 8px 25px rgba(0,0,0,0.3);
+    
+    /* TRANSICIONES */
+    --transition-fast: 0.2s;
+    --transition-normal: 0.3s;
+}
+
 /* la cascada aplica para todos los h1
 /* como es cascada, aplica en orden de arriba a abajo, por eso el h1 de abajo es el que se aplica/
 /**************/
 
 .cuerpo{
-    background-color: #fe3031;
-    font-family: Arial, sans-serif;
-    color: #fafafa;
-    padding: 30px 20px;
+    background-color: var(--color-primary);
+    font-family: var(--font-family);
+    color: var(--color-light);
+    padding: var(--spacing-2xl) var(--spacing-lg);
     text-align: center;
     position: relative;
     overflow: hidden;
@@ -21,39 +74,39 @@
 }
 
 .subheader {
-    font: 20px Arial, sans-serif;
+    font: var(--font-size-base) var(--font-family);
     position: sticky;
     top: 0;
     z-index: 10;
-    background: #fe3031;
-    padding: 12px 16px;
+    background: var(--color-primary);
+    padding: var(--spacing-md) var(--spacing-lg);
     display: flex;
-    gap: 12px;
+    gap: var(--spacing-md);
     flex-wrap: wrap;
     justify-content: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    box-shadow: var(--shadow-sm);
 }
 
 .subheader a {
     text-decoration: none;
-    color: #333;
-    background: #fe3031;
-    color: #fff;
-    padding: 8px 12px;
-    border-radius: 4px;
+    color: var(--color-dark);
+    background: var(--color-primary);
+    color: var(--color-light);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-sm);
     font-weight: 600;
 }
 
 .subheader a:hover,
 .subheader a:focus {
-    background: #cc2929;
+    background: var(--color-primary-dark);
 }
 
 .seccion-placeholder {
     min-height: 600px;
-    padding: 60px 20px 40px 20px;
-    background-color: #fe3031;
-    color: #fafafa;
+    padding: var(--spacing-3xl) var(--spacing-lg) var(--spacing-2xl);
+    background-color: var(--color-primary);
+    color: var(--color-light);
     text-align: center;
 }
 
@@ -62,13 +115,13 @@
 }
 
 .seccion-header {
-    margin-bottom: 40px;
+    margin-bottom: var(--spacing-2xl);
 }
 
 .seccion-descripcion {
-    font-size: 1.2em;
-    color: #fafafa;
-    margin-top: 10px;
+    font-size: var(--font-size-base);
+    color: var(--color-light);
+    margin-top: var(--spacing-md);
     font-style: italic;
     font-weight: 300;
 }
@@ -83,31 +136,31 @@ h1, h2 {
 }
 
 .cuerpo h2 {
-    color: #fafafa;
-    font-size: 3.5em;
-    margin-top: 20px;
-    margin-bottom: 5px;
+    color: var(--color-light);
+    font-size: var(--font-size-4xl);
+    margin-top: var(--spacing-lg);
+    margin-bottom: var(--spacing-xs);
 }
 
 .cuerpo h1 {
-    color: #fafafa;
-    font-size: 3em;
-    margin-top: 10px;
+    color: var(--color-light);
+    font-size: var(--font-size-3xl);
+    margin-top: var(--spacing-md);
     margin-bottom: 0;
 }
 
 .seccion-placeholder h1 {
-    color: #fafafa;
-    font-size: 2.5em;
+    color: var(--color-light);
+    font-size: var(--font-size-2xl);
     margin-top: 0;
-    margin-bottom: 5px;
+    margin-bottom: var(--spacing-xs);
 }
 
 .eventos-container {
     display: flex;
     overflow-x: auto;
-    gap: 20px;
-    padding: 20px;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-lg);
     scroll-snap-type: x mandatory;
     max-width: 100%;
 }
@@ -117,64 +170,64 @@ h1, h2 {
     scroll-snap-align: start;
     text-align: center;
     position: relative;
-    background: #f9f9f9;
-    padding: 15px;
-    border-radius: 8px;
-    transition: transform 0.2s;
+    background: var(--color-bg-light);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+    transition: transform var(--transition-fast);
 }
 
 .evento:hover {
     transform: translateY(-5px);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    box-shadow: var(--shadow-md);
 }
 
 .flyer {
     width: 100%;
     height: 280px;
     object-fit: cover;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
 }
 
 .evento-nombre {
     font-weight: bold;
-    margin: 10px 0 5px 0;
+    margin: var(--spacing-md) 0 var(--spacing-xs);
 }
 
 .evento-fecha {
-    color: #666;
-    margin: 5px 0;
+    color: var(--color-gray);
+    margin: var(--spacing-xs) 0;
 }
 
 .etiqueta-pasado {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    background: #fe3031;
+    top: var(--spacing-md);
+    right: var(--spacing-md);
+    background: var(--color-primary);
     color: white;
-    padding: 5px 8px;
-    border-radius: 4px;
-    font-size: 0.8em;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-xs);
 }
 
 .videos-grid {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 20px;
-    padding: 20px;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-lg);
 }
 
 .video-item {
-    font-family: Arial, sans-serif;
+    font-family: var(--font-family);
     font-weight: bold;
     text-decoration: none;
-    color: #fafafa;
+    color: var(--color-light);
     text-align: center;
-    background: #98002b;
-    padding: 10px;
-    border-radius: 8px;
+    background: var(--color-secondary);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
     width: 250px;
-    transition: transform 0.2s;
+    transition: transform var(--transition-fast);
 }
 
 .video-item:hover {
@@ -185,11 +238,11 @@ h1, h2 {
     width: 100%;
     height: 250px;
     object-fit: cover;
-    border-radius: 4px;
+    border-radius: var(--radius-sm);
 }
 
 .video-item p {
-    margin: 10px 0 0 0;
+    margin: var(--spacing-md) 0 0;
     font-weight: bold;
 }
 
@@ -199,10 +252,10 @@ html {
 
 footer {
     text-align: center;
-    background-color: #fe3031;
-    color: #fafafa;
-    padding: 20px;
-    margin-top: 40px;
+    background-color: var(--color-primary);
+    color: var(--color-light);
+    padding: var(--spacing-lg);
+    margin-top: var(--spacing-2xl);
 }
 
 /* Revistas */
@@ -210,13 +263,13 @@ footer {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 20px;
-    padding: 20px;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-lg);
 }
 
 .revista-item {
     flex: 0 0 200px;
-    transition: transform 0.2s;
+    transition: transform var(--transition-fast);
 }
 
 .revista-item:hover {
@@ -226,24 +279,24 @@ footer {
 .revista-item img {
     width: 100%;
     height: auto;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
 }
 
 /* Integrantes */
 .integrantes-container {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    padding: 20px;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-lg);
 }
 
 .integrante {
     display: flex;
     align-items: center;
-    padding: 25px;
+    padding: var(--spacing-xl);
     background: linear-gradient(to right, rgba(254,48,49,0.2) 0%, rgba(254,48,49,0.5) 50%);
-    border-radius: 8px;
-    transition: transform 0.2s;
+    border-radius: var(--radius-md);
+    transition: transform var(--transition-fast);
 }
 
 .integrante:hover {
@@ -253,21 +306,21 @@ footer {
 .integrante img {
     width: 120px;
     height: 120px;
-    margin-right: 30px;
-    border-radius: 50%;
+    margin-right: var(--spacing-xl);
+    border-radius: var(--radius-full);
     object-fit: cover;
-    border: 3px solid #fafafa;
+    border: 3px solid var(--color-light);
 }
 
 .info h3 {
     margin: 0;
-    color: #fafafa;
-    font-size: 1.5em;
+    color: var(--color-light);
+    font-size: var(--font-size-lg);
 }
 
 .info p {
-    margin: 5px 0 0 0;
-    color: #fafafa;
+    margin: var(--spacing-xs) 0 0;
+    color: var(--color-light);
 }
 
 /* Hero Section */
@@ -278,7 +331,7 @@ footer {
     justify-content: center;
     position: relative;
     overflow: hidden;
-    background-color: #fe3031;
+    background-color: var(--color-primary);
 }
 
 .hero-video {
