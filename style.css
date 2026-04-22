@@ -127,6 +127,32 @@
     text-align: center;
 }
 
+/* Sección Bienvenida */
+.seccion-bienvenida {
+    background-color: var(--color-primary);
+    color: var(--color-light);
+    padding: var(--spacing-3xl) var(--spacing-lg);
+    text-align: left;
+}
+
+.bienvenida-content {
+    max-width: 900px;
+    margin: 0 auto;
+    line-height: 1.8;
+    font-family: var(--font-family);
+    font-size: 1.5em;
+}
+
+.bienvenida-content p {
+    margin-bottom: var(--spacing-xl);
+    text-align: justify;
+    color: var(--color-light);
+}
+
+.bienvenida-content p:last-child {
+    margin-bottom: 0;
+}
+
 .seccion-final {
     padding-bottom: 60px;
 }
@@ -186,6 +212,7 @@ h1, h2 {
     flex: 0 0 280px;
     scroll-snap-align: start;
     color: var(--color-dark);
+    font: var(--font-size-sm) var(--font-family);
     text-align: center;
     position: relative;
     background: var(--color-secondary);
