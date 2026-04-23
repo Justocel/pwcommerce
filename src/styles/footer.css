@@ -1,0 +1,12 @@
+/* Footer styles */
+footer {
+  text-align: center;
+  background-color: var(--color-primary);
+  color: var(--color-light);
+  padding: var(--spacing-lg);
+  margin-top: var(--spacing-2xl);
+}
+
+footer p {
+  margin: 0;
+}

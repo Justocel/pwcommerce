@@ -1,0 +1,40 @@
+/* Integrantes section styles */
+.integrantes-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-lg);
+}
+
+.integrante {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-xl);
+  background: linear-gradient(to right, rgba(254, 48, 49, 0.2) 0%, rgba(254, 48, 49, 0.5) 50%);
+  border-radius: var(--radius-md);
+  transition: transform var(--transition-fast);
+}
+
+.integrante:hover {
+  transform: translateX(10px);
+}
+
+.integrante-img {
+  width: 320px;
+  height: 320px;
+  margin-right: var(--spacing-3xl);
+  border-radius: var(--radius-full);
+  object-fit: cover;
+  border: 3px solid var(--color-light);
+}
+
+.info h3 {
+  margin: 0;
+  color: var(--color-light);
+  font-size: var(--font-size-lg);
+}
+
+.info p {
+  margin: var(--spacing-xs) 0 0;
+  color: var(--color-light);
+}

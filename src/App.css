@@ -1,0 +1,32 @@
+/* Reset y estilos base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--color-primary);
+  color: var(--color-light);
+}
+
+.App {
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Scroll suave */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Utility: Logo hover - solo se mueve al pasar mouse */
+.logo-hover {
+  cursor: pointer;
+  transition: transform var(--transition-normal);
+}
+
+.logo-hover:hover {
+  transform: translateY(-8px);
+}

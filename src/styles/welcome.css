@@ -1,0 +1,25 @@
+/* Welcome section styles */
+.seccion-bienvenida {
+  background-color: var(--color-primary);
+  color: var(--color-light);
+  padding: var(--spacing-3xl) var(--spacing-lg);
+  text-align: left;
+}
+
+.bienvenida-content {
+  max-width: 900px;
+  margin: 0 auto;
+  line-height: 1.8;
+  font-family: var(--font-family);
+  font-size: 1.5em;
+}
+
+.bienvenida-content p {
+  margin-bottom: var(--spacing-xl);
+  text-align: justify;
+  color: var(--color-light);
+}
+
+.bienvenida-content p:last-child {
+  margin-bottom: 0;
+}
