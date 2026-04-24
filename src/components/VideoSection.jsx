@@ -9,17 +9,9 @@ import '../styles/video-section.css';
  *
  * Props:
  * - sectionData: { id, titulo, descripcion }
- * - videos: array de objetos video
+ * - videos: array de objetos video { id, link (YouTubeId), titulo, seccion }
  */
 function VideoSection({ sectionData, videos }) {
-  /**
-   * Genera la URL del thumbnail de YouTube
-   * YouTube proporciona thumbnails en: https://img.youtube.com/vi/{videoId}/maxresdefault.jpg
-   */
-  const getThumbnailUrl = (youtubeId) => {
-    return `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`;
-  };
-
   return (
     <section id={sectionData.id} className="seccion-placeholder">
       <div className="seccion-header">
@@ -28,11 +20,7 @@ function VideoSection({ sectionData, videos }) {
       </div>
       <div className="videos-grid">
         {videos.map((video) => (
-          <VideoItem
-            key={video.id}
-            videoData={video}
-            thumbnailUrl={getThumbnailUrl(video.link)}
-          />
+          <VideoItem key={video.id} videoData={video} />
         ))}
       </div>
     </section>

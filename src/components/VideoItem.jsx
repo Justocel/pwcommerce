@@ -9,21 +9,37 @@ import '../styles/video-item.css';
  * Estado:
  * - isHovered: controla si el mouse está sobre el video
  * - scaleValue: valor actual de escala (animado)
+ * - thumbnailError: si el thumbnail falló al cargar
  *
  * Props:
- * - videoData: { id, link, titulo, thumbnail, alt }
- * - thumbnailUrl: URL completa de thumbnail
+ * - videoData: { id, link (YouTubeId), titulo, seccion }
  */
-function VideoItem({ videoData, thumbnailUrl }) {
+function VideoItem({ videoData }) {
   const [isHovered, setIsHovered] = useState(false);
   const [scaleValue, setScaleValue] = useState(1);
+  const [thumbnailError, setThumbnailError] = useState(false);
   const animationRef = useRef(null);
   const startTimeRef = useRef(null);
 
   /**
+   * Genera URL de thumbnail de YouTube
+   * Usa hqdefault que es más confiable que maxresdefault
+   */
+  const getThumbnailUrl = () => {
+    return `https://img.youtube.com/vi/${videoData.link}/hqdefault.jpg`;
+  };
+
+  /**
+   * Genera URL de YouTube para abrir en nueva ventana
+   */
+  const getYoutubeUrl = () => {
+    return `https://youtu.be/${videoData.link}`;
+  };
+
+  /**
    * Animación de escala suave
    * Usa easing personalizado: rápido al principio, lento al final
-   * Interpolación: ease-out
+   * Interpolación: ease-out cubic
    */
   const animateScale = (targetScale, duration = 300) => {
     startTimeRef.current = Date.now();
@@ -48,19 +64,21 @@ function VideoItem({ videoData, thumbnailUrl }) {
 
   const handleMouseEnter = () => {
     setIsHovered(true);
-    // Escala a 1.05 (5% más grande) - rápido primero, lento después
     animateScale(1.05, 300);
   };
 
   const handleMouseLeave = () => {
     setIsHovered(false);
-    // Vuelve a escala normal - rápido primero, lento después
     animateScale(1, 300);
+  };
+
+  const handleThumbnailError = () => {
+    setThumbnailError(true);
   };
 
   return (
     <a
-      href={`https://youtu.be/${videoData.link}`}
+      href={getYoutubeUrl()}
       target="_blank"
       rel="noopener noreferrer"
       className="video-item"
@@ -70,11 +88,18 @@ function VideoItem({ videoData, thumbnailUrl }) {
         transform: `scale(${scaleValue})`
       }}
     >
-      <img
-        src={thumbnailUrl}
-        alt={videoData.titulo}
-        className="video-thumbnail"
-      />
+      {!thumbnailError ? (
+        <img
+          src={getThumbnailUrl()}
+          alt={videoData.titulo}
+          className="video-thumbnail"
+          onError={handleThumbnailError}
+        />
+      ) : (
+        <div className="video-thumbnail video-thumbnail-error">
+          <span>Thumbnail no disponible</span>
+        </div>
+      )}
       <p>{videoData.titulo}</p>
     </a>
   );

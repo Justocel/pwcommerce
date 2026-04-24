@@ -20,7 +20,18 @@
   border-radius: var(--radius-sm);
 }
 
+.video-thumbnail-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-dark);
+  color: var(--color-light);
+  font-size: var(--font-size-sm);
+  text-align: center;
+}
+
 .video-item p {
   margin: var(--spacing-md) 0 0;
   font-weight: bold;
+  font-size: var(--font-size-sm);
 }

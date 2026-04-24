@@ -18,21 +18,21 @@ export const eventos = [
   {
     id: 1,
     nombre: 'Evento Próximo 1',
-    fecha: '2026-04-05',
+    fecha: '2026-05-05',
     image: 'Eventos/1.png',
     estado: 'futuro',
   },
   {
     id: 2,
     nombre: 'Evento Próximo 2',
-    fecha: '2026-04-10',
+    fecha: '2026-05-10',
     image: 'Eventos/2.png',
     estado: 'futuro',
   },
   {
     id: 3,
     nombre: 'Evento Próximo 3',
-    fecha: '2026-04-15',
+    fecha: '2026-05-15',
     image: 'Eventos/3.png',
     estado: 'futuro',
   },
@@ -64,55 +64,48 @@ export const videosGracias = [
   {
     id: 1,
     titulo: 'LOLA TABA | Gracias por la Intercomunicación #1',
-    url: 'https://youtu.be/gKdnwWDJEDM?si=QEVlXmfU42n65TEQ',
-    thumbnail: 'https://img.youtube.com/vi/gKdnwWDJEDM/maxresdefault.jpg',
-    alt: 'Portada LOLA TABA',
+    link: 'gKdnwWDJEDM',
+    seccion: 'gracias-por-la-intercomunicacion'
   },
   {
     id: 2,
     titulo: 'JERO JONES | Gracias por la Intercomunicación #2',
-    url: 'https://youtu.be/L-POc5KiwPI?si=ntWpOggc7x6u2Z4R',
-    thumbnail: 'https://img.youtube.com/vi/L-POc5KiwPI/maxresdefault.jpg',
-    alt: 'Portada JERO JONES',
+    link: 'L-POc5KiwPI',
+    seccion: 'gracias-por-la-intercomunicacion'
   },
   {
     id: 3,
     titulo: 'LUCY PATANÉ en el SONIDO KONEX | Gracias por la Intercomunicación MINI',
-    url: 'https://youtu.be/K3IoicFrKv8?si=R3mqcTwn7iToZRAo',
-    thumbnail: 'https://img.youtube.com/vi/K3IoicFrKv8/maxresdefault.jpg',
-    alt: 'Portada LUCY PATANÉ',
+    link: 'K3IoicFrKv8',
+    seccion: 'gracias-por-la-intercomunicacion'
   },
   {
     id: 4,
     titulo: 'DUM CHICA - SONIDO KONEX | Gracias por la Intercomunicación MINI',
-    url: 'https://youtu.be/CPx_9g0yqFA?si=dJqY118LLYZ7abJ7',
-    thumbnail: 'https://img.youtube.com/vi/CPx_9g0yqFA/maxresdefault.jpg',
-    alt: 'Portada DUM CHICA',
+    link: 'CPx_9g0yqFA',
+    seccion: 'gracias-por-la-intercomunicacion'
   },
 ];
 
 // VIDEOS - Picnic en la tierra
 export const videosPicnic = [
   {
-    id: 1,
+    id: 5,
     titulo: 'DOBLE FECHA LIVERPOOL-MARADENTRO 16/09/25 | Picnic en la Tierra #1',
-    url: 'https://youtu.be/r0OWf4eB92w?si=UsqDfiavqbYFTcMC',
-    thumbnail: 'https://img.youtube.com/vi/r0OWf4eB92w/maxresdefault.jpg',
-    alt: 'Portada DOBLE FECHA LIVERPOOL-MARADENTRO',
+    link: 'r0OWf4eB92w',
+    seccion: 'picnic-en-la-tierra'
   },
   {
-    id: 2,
+    id: 6,
     titulo: 'JAMMIN Y RAESVORIA EN MOSCÚ | Picnic en la Tierra',
-    url: 'https://youtu.be/hv16HuuGCfo?si=Q6e_RQTNYtdLjqt7',
-    thumbnail: 'https://img.youtube.com/vi/hv16HuuGCfo/maxresdefault.jpg',
-    alt: 'Portada JAMMIN Y RAESVORIA',
+    link: 'hv16HuuGCfo',
+    seccion: 'picnic-en-la-tierra'
   },
   {
-    id: 3,
+    id: 7,
     titulo: 'LUCY PATANÉ Y DUM CHICA EN EL SONIDO KONEX | Picnic en la Tierra',
-    url: 'https://youtu.be/2kVHDyyp-FA?si=soWblOsmQsuJyqsv',
-    thumbnail: 'https://img.youtube.com/vi/2kVHDyyp-FA/maxresdefault.jpg',
-    alt: 'Portada LUCY PATANÉ Y DUM CHICA',
+    link: '2kVHDyyp-FA',
+    seccion: 'picnic-en-la-tierra'
   },
 ];
 
