@@ -8,7 +8,12 @@
       "Bash(cp -r c:/Users/justo/pwcommerce/Integrantes c:/Users/justo/pwcommerce/pwcommerce/public/)",
       "Bash(cp c:/Users/justo/pwcommerce/icon.mp4 c:/Users/justo/pwcommerce/pwcommerce/public/icon.mp4)",
       "Bash(cp c:/Users/justo/pwcommerce/icon.jpg c:/Users/justo/pwcommerce/pwcommerce/public/icon.jpg)",
-      "Bash(taskkill //PID 26328 //F)"
+      "Bash(taskkill //PID 26328 //F)",
+      "Bash(git -C c:/Users/justo/pwcommerce status)",
+      "Bash(shopt -s dotglob)",
+      "Bash(mv pwcommerce/* .)",
+      "Bash(shopt -u dotglob)",
+      "Bash(git -C c:/Users/justo/pwcommerce status --short)"
     ]
   }
 }
