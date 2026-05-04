@@ -1,6 +1,7 @@
 import Header from './components/Header';
 import Hero from './components/Hero';
 import Welcome from './components/Welcome';
+import Articulos from './components/Articulos';
 import Events from './components/Events';
 import VideoSection from './components/VideoSection';
 import Revistas from './components/Revistas';
@@ -28,6 +29,7 @@ export default function Home() {
       <Header />
       <Hero />
       <Welcome />
+      <Articulos />
       <Events />
       <VideoSection sectionData={secciones.gracias} videos={videosGracias} />
       <VideoSection sectionData={secciones.picnic} videos={videosPicnic} />

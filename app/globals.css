@@ -249,6 +249,126 @@ h2 {
 }
 
 /* ===================================
+   ARTICULOS
+   =================================== */
+
+.articulos-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-lg);
+}
+
+.articulo-card {
+  flex: 0 0 600px;
+  max-width: 100%;
+  background: var(--color-primary);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  text-decoration: none;
+  color: var(--color-light);
+  box-shadow: var(--shadow-md);
+  transition: transform var(--transition-fast);
+  display: flex;
+  flex-direction: column;
+}
+
+.articulo-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+}
+
+.articulo-image {
+  width: 100%;
+  height: 320px;
+  object-fit: cover;
+  display: block;
+}
+
+.articulo-overlay {
+  background: var(--color-primary);
+  padding: var(--spacing-xl);
+  text-align: left;
+}
+
+.articulo-categoria {
+  display: inline-block;
+  background: var(--color-light);
+  color: var(--color-primary);
+  font-weight: 700;
+  font-size: var(--font-size-sm);
+  letter-spacing: 0.05em;
+  padding: var(--spacing-xs) var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  border-radius: var(--radius-sm);
+}
+
+.articulo-titulo {
+  font-size: var(--font-size-3xl);
+  font-weight: 700;
+  color: var(--color-light);
+  margin: 0 0 var(--spacing-sm);
+  text-align: left;
+  line-height: 1.1;
+}
+
+.articulo-subtitulo {
+  font-size: var(--font-size-xl);
+  color: var(--color-light);
+  margin: 0;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+/* ===================================
+   ARTICULO DETALLE
+   =================================== */
+
+.articulo-detalle {
+  background-color: var(--color-primary);
+  color: var(--color-light);
+  padding: var(--spacing-3xl) var(--spacing-lg);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.articulo-detalle-image {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-2xl);
+  display: block;
+}
+
+.articulo-detalle-contenido {
+  font-family: var(--font-family);
+}
+
+.articulo-detalle-titulo {
+  font-size: var(--font-size-4xl);
+  font-weight: 700;
+  color: var(--color-light);
+  margin: 0 0 var(--spacing-md);
+  text-align: left;
+  line-height: 1.1;
+}
+
+.articulo-detalle-subtitulo {
+  font-size: var(--font-size-xl);
+  color: var(--color-light);
+  font-style: italic;
+  margin: 0 0 var(--spacing-2xl);
+}
+
+.articulo-detalle-cuerpo {
+  font-size: var(--font-size-base);
+  line-height: 1.8;
+  color: var(--color-light);
+  text-align: justify;
+}
+
+/* ===================================
    EVENTOS
    =================================== */
 

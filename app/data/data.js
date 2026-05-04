@@ -12,6 +12,20 @@ export const COLORS = {
   dark: '#333',
 };
 
+// ARTICULOS
+export const articulos = [
+  {
+    id: 1,
+    slug: 'entrevista-clara-osimani',
+    categoria: 'ENTREVISTAS',
+    titulo: 'CLARA OSIMANI:',
+    subtitulo: 'Yo escribo de alguna forma para eternizar',
+    image: '/Articulos/entrevista-clara-osimani.png',
+    contenido:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+  },
+];
+
 // EVENTOS
 export const eventos = [
   {
@@ -158,6 +172,11 @@ export const secciones = {
     subtitulo: 'La revista del arte fino',
     videoSrc: '/icon.mp4',
   },
+  articulos: {
+    id: 'articulos',
+    titulo: 'Artículos',
+    descripcion: 'Lecturas para llevarte',
+  },
   eventos: {
     id: 'eventos',
     titulo: 'Eventos',
@@ -175,7 +194,7 @@ export const secciones = {
   },
   revistas: {
     id: 'consegui-tu-revista',
-    titulo: 'Conseguí tu revista',
+    titulo: 'Conseguí la revista',
     descripcion: 'No te quedes afuera',
   },
   equipo: {
@@ -187,10 +206,11 @@ export const secciones = {
 
 // NAVEGACIÓN
 export const navLinks = [
+  { label: 'Artículos', href: '#articulos' },
   { label: 'Eventos', href: '#eventos' },
   { label: 'Gracias por la intercomunicación', href: '#gracias-intercomunicacion' },
   { label: 'Picnic en la tierra', href: '#picnic-en-la-tierra' },
-  { label: 'Conseguí tu revista', href: '#consegui-tu-revista' },
+  { label: 'Conseguí la revista', href: '#consegui-tu-revista' },
   { label: 'Quiénes Somos', href: '#quienes-somos' },
 ];
 
