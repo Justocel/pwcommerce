@@ -177,10 +177,20 @@ export const secciones = {
     titulo: 'Artículos',
     descripcion: 'Lecturas para llevarte',
   },
-  eventos: {
-    id: 'eventos',
-    titulo: 'Eventos',
+  eventosProximos: {
+    id: 'eventos-proximos',
+    titulo: 'Eventos próximos',
     descripcion: 'No te los pierdas',
+  },
+  eventosPasados: {
+    id: 'eventos-pasados',
+    titulo: 'Eventos pasados',
+    descripcion: 'Lo que ya vivimos',
+  },
+  picnicEscena: {
+    id: 'picnic-en-la-escena',
+    titulo: 'Picnic en la escena',
+    descripcion: 'La escena en primera persona',
   },
   gracias: {
     id: 'gracias-intercomunicacion',
@@ -206,12 +216,12 @@ export const secciones = {
 
 // NAVEGACIÓN
 export const navLinks = [
-  { label: 'Artículos', href: '#articulos' },
-  { label: 'Eventos', href: '#eventos' },
-  { label: 'Gracias por la intercomunicación', href: '#gracias-intercomunicacion' },
-  { label: 'Picnic en la tierra', href: '#picnic-en-la-tierra' },
-  { label: 'Conseguí la revista', href: '#consegui-tu-revista' },
-  { label: 'Quiénes Somos', href: '#quienes-somos' },
+  { label: 'Artículos', href: '/#articulos' },
+  { label: 'Eventos próximos', href: '/#eventos-proximos' },
+  { label: 'Eventos pasados', href: '/#eventos-pasados' },
+  { label: 'Picnic en la escena', href: '/#picnic-en-la-escena' },
+  { label: 'Conseguí la revista', href: '/#consegui-tu-revista' },
+  { label: 'Quiénes Somos', href: '/#quienes-somos' },
 ];
 
 // FOOTER

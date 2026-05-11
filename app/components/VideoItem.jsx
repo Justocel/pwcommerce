@@ -17,7 +17,7 @@ function VideoItem({ videoData }) {
   const startTimeRef = useRef(null);
 
   const getThumbnailUrl = () => {
-    return `https://img.youtube.com/vi/${videoData.link}/hqdefault.jpg`;
+    return `https://img.youtube.com/vi/${videoData.link}/mqdefault.jpg`;
   };
 
   const getYoutubeUrl = () => {
