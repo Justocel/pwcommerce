@@ -7,7 +7,19 @@ import {
   SRGBColorSpace,
   ClampToEdgeWrapping,
 } from 'three';
-import { Suspense } from 'react';
+import { Suspense, useEffect, useState } from 'react';
+
+function usePrefersReducedMotion() {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const update = () => setReduced(mq.matches);
+    update();
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, []);
+  return reduced;
+}
 
 const TEXTURE_PATHS = [
   '/Revistas/7.png',
@@ -55,6 +67,8 @@ function MagazineMesh() {
 }
 
 export default function Revista3D() {
+  const reducedMotion = usePrefersReducedMotion();
+
   return (
     <div className="revista-3d-canvas">
       <Canvas camera={{ position: [0, 0, 0.75], fov: 35 }} dpr={[1, 2]}>
@@ -63,10 +77,10 @@ export default function Revista3D() {
         </Suspense>
         <OrbitControls
           enablePan={false}
-          enableZoom = {false}
+          enableZoom={false}
           minDistance={0.3}
           maxDistance={1.0}
-          autoRotate
+          autoRotate={!reducedMotion}
           autoRotateSpeed={0.6}
         />
       </Canvas>

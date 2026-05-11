@@ -1,8 +1,11 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { navLinks, secciones } from '../data/data';
 import { useAuth } from '../context/AuthProvider';
+import { useCart } from '../context/CartProvider';
+import CartPanel from './CartPanel';
 
 /**
  * COMPONENTE HEADER
@@ -11,6 +14,31 @@ import { useAuth } from '../context/AuthProvider';
  */
 function Header() {
   const { user, hydrated, logout } = useAuth();
+  const { totalItems, showCart, setShowCart } = useCart();
+  const [activeSection, setActiveSection] = useState('');
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const ids = navLinks
+      .map((l) => l.href.split('#')[1])
+      .filter(Boolean);
+
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 80);
+      const triggerY = window.innerHeight * 0.3;
+      let current = '';
+      for (const id of ids) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        if (el.getBoundingClientRect().top <= triggerY) current = id;
+      }
+      setActiveSection(current);
+    };
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <>
@@ -21,15 +49,41 @@ function Header() {
         </Link>
       </header>
 
-      <nav className="subheader" aria-label="Navegación interna de secciones">
+      <nav
+        className={`subheader${isScrolled ? ' subheader--scrolled' : ''}`}
+        aria-label="Navegación interna de secciones"
+      >
         <div className="subheader-links">
-          {navLinks.map((link, index) => (
-            <Link key={index} href={link.href}>
-              {link.label}
-            </Link>
-          ))}
+          {navLinks.map((link, index) => {
+            const id = link.href.split('#')[1];
+            const isActive = id === activeSection;
+            return (
+              <Link
+                key={index}
+                href={link.href}
+                className={isActive ? 'subheader-link--active' : ''}
+                aria-current={isActive ? 'page' : undefined}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
         </div>
         <div className="subheader-auth" aria-label="Cuenta de usuario">
+          <button
+            type="button"
+            className="subheader-cart"
+            onClick={() => setShowCart((prev) => !prev)}
+            aria-label={`Carrito (${totalItems} ${
+              totalItems === 1 ? 'item' : 'items'
+            })`}
+            aria-expanded={showCart}
+          >
+            Carrito
+            {totalItems > 0 && (
+              <span className="subheader-cart-badge">{totalItems}</span>
+            )}
+          </button>
           {hydrated && user ? (
             <>
               <Link
@@ -54,6 +108,7 @@ function Header() {
           )}
         </div>
       </nav>
+      <CartPanel />
     </>
   );
 }

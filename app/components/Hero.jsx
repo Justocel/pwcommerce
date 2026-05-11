@@ -2,11 +2,20 @@ import { secciones } from '../data/data';
 
 /**
  * COMPONENTE HERO
- * Sección con video de fondo
+ * Sección con video de fondo. El h1 va sr-only — el branding visible
+ * ya está en el header arriba, pero el h1 sigue ahí por SEO y a11y
+ * (si el video falla, los lectores de pantalla aún saben dónde están).
  */
 function Hero() {
   return (
-    <section id={secciones.hero.id} className="seccion-hero">
+    <section
+      id={secciones.hero.id}
+      className="seccion-hero"
+      aria-label={`${secciones.hero.titulo} — ${secciones.hero.subtitulo}`}
+    >
+      <h1 className="sr-only">
+        {secciones.hero.titulo} — {secciones.hero.subtitulo}
+      </h1>
       <video autoPlay muted loop playsInline className="hero-video">
         <source src={secciones.hero.videoSrc} type="video/mp4" />
       </video>
