@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { navLinks, secciones } from '../data/data';
 import { useAuth } from '../context/AuthProvider';
 import { useCart } from '../context/CartProvider';
+import { useEditMode } from '../context/EditModeProvider';
 import CartPanel from './CartPanel';
 
 /**
@@ -13,8 +14,9 @@ import CartPanel from './CartPanel';
  * (Iniciar sesión / Mis revistas / Salir).
  */
 function Header() {
-  const { user, hydrated, logout } = useAuth();
+  const { user, hydrated, isEditor, logout } = useAuth();
   const { totalItems, showCart, setShowCart } = useCart();
+  const { editMode, toggleEditMode } = useEditMode();
   const [activeSection, setActiveSection] = useState('');
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -86,6 +88,26 @@ function Header() {
           </button>
           {hydrated && user ? (
             <>
+              {isEditor && (
+                <>
+                  <button
+                    type="button"
+                    className={`subheader-edit${editMode ? ' subheader-edit--active' : ''}`}
+                    onClick={toggleEditMode}
+                    aria-pressed={editMode}
+                    title={editMode ? 'Salir del modo edición' : 'Activar modo edición'}
+                  >
+                    {editMode ? 'Salir de edición' : 'Editar'}
+                  </button>
+                  <Link
+                    href="/admin/analytics"
+                    className="subheader-edit"
+                    title="Analytics"
+                  >
+                    Analytics
+                  </Link>
+                </>
+              )}
               <Link
                 href="/mis-revistas"
                 className="subheader-user"

@@ -1,55 +1,114 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { revistas } from '../data/data';
+import { supabase } from '@/lib/supabase';
+import { useAuth } from './AuthProvider';
 
+/**
+ * CART PROVIDER — persistente en cart_items (Supabase).
+ *
+ * - Requiere user logueado para agregar items.
+ * - Cada item es un { revista_id }: no hay cantidad (revista digital, máx 1
+ *   por user, garantizado por UNIQUE(user_id, revista_id)).
+ * - El total se calcula en el componente que renderiza (CartPanel), usando
+ *   useRevistas() para resolver el precio de cada item.
+ */
 const CartContext = createContext(null);
 
 export function CartProvider({ children }) {
-  const [cart, setCart] = useState([]);
+  const { user, hydrated: authHydrated } = useAuth();
+  const [cart, setCart] = useState([]); // [{ revista_id, created_at }]
   const [showCart, setShowCart] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    if (!authHydrated) return;
+    if (!user) {
+      setCart([]);
+      setHydrated(true);
+      return;
+    }
+    loadCart();
+  }, [authHydrated, user?.id]);
 
   useEffect(() => {
     if (cart.length === 0 && showCart) setShowCart(false);
   }, [cart, showCart]);
 
-  const addToCart = (revistaId) => {
-    setCart((prev) => {
-      const existing = prev.find((item) => item.id === revistaId);
-      if (existing) {
-        return prev.map((item) =>
-          item.id === revistaId
-            ? { ...item, cantidad: item.cantidad + 1 }
-            : item
-        );
-      }
-      return [...prev, { id: revistaId, cantidad: 1 }];
-    });
+  const loadCart = async () => {
+    const { data, error } = await supabase
+      .from('cart_items')
+      .select('revista_id, created_at')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false });
+    if (error) {
+      console.error('Error cargando carrito:', error.message);
+      setCart([]);
+    } else {
+      setCart(data || []);
+    }
+    setHydrated(true);
   };
 
-  const removeFromCart = (revistaId) => {
-    setCart((prev) => prev.filter((item) => item.id !== revistaId));
+  const addToCart = async (revistaId) => {
+    if (!user) return { error: { code: 'NO_AUTH', message: 'Necesitás iniciar sesión' } };
+    const { error } = await supabase
+      .from('cart_items')
+      .upsert(
+        { user_id: user.id, revista_id: revistaId },
+        { onConflict: 'user_id,revista_id', ignoreDuplicates: true }
+      );
+    if (error) {
+      console.error('Error agregando al carrito:', error.message);
+      return { error };
+    }
+    await loadCart();
+    return { error: null };
   };
 
-  const clearCart = () => setCart([]);
+  const removeFromCart = async (revistaId) => {
+    if (!user) return;
+    const { error } = await supabase
+      .from('cart_items')
+      .delete()
+      .eq('user_id', user.id)
+      .eq('revista_id', revistaId);
+    if (error) {
+      console.error('Error eliminando del carrito:', error.message);
+      return;
+    }
+    await loadCart();
+  };
 
-  const totalItems = cart.reduce((acc, item) => acc + item.cantidad, 0);
-  const total = cart.reduce((acc, item) => {
-    const revista = revistas.find((r) => r.id === item.id);
-    return acc + (revista?.precio || 0) * item.cantidad;
-  }, 0);
+  const clearCart = async () => {
+    if (!user) return;
+    const { error } = await supabase
+      .from('cart_items')
+      .delete()
+      .eq('user_id', user.id);
+    if (error) {
+      console.error('Error vaciando carrito:', error.message);
+      return;
+    }
+    setCart([]);
+  };
+
+  const hasInCart = (revistaId) =>
+    cart.some((c) => c.revista_id === revistaId);
+  const totalItems = cart.length;
 
   return (
     <CartContext.Provider
       value={{
         cart,
+        hydrated,
         addToCart,
         removeFromCart,
         clearCart,
+        hasInCart,
         showCart,
         setShowCart,
         totalItems,
-        total,
       }}
     >
       {children}

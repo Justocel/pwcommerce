@@ -1,60 +1,73 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabase';
+import { useAuth } from './AuthProvider';
 
 /**
- * PURCHASES PROVIDER (mock)
- * Persiste un array de compras por email en localStorage:
- *   { [email]: [{ revistaId, fecha }] }
+ * PURCHASES PROVIDER — persistente en purchases (Supabase).
  *
- * Cuando se conecte a una DB real, addPurchase() pasa a ser un INSERT en la
- * tabla purchases y getPurchases() pasa a ser un SELECT por user_id.
+ * - addPurchases() inserta filas con (user_id, revista_id). El trigger
+ *   snapshot_purchase_price() pisa precio_pagado con revistas.precio y
+ *   estado='completada' del lado del server (no se puede spoofear desde el cliente).
+ * - hasPurchase(revistaId) responde sin consulta — usa el cache cargado.
  */
 const PurchasesContext = createContext(null);
-const STORAGE_KEY = 'picnic.purchases';
-
-function readStore() {
-  if (typeof window === 'undefined') return {};
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-  } catch {
-    return {};
-  }
-}
 
 export function PurchasesProvider({ children }) {
-  const [store, setStore] = useState({});
+  const { user, hydrated: authHydrated } = useAuth();
+  const [purchases, setPurchases] = useState([]);
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    setStore(readStore());
+    if (!authHydrated) return;
+    if (!user) {
+      setPurchases([]);
+      setHydrated(true);
+      return;
+    }
+    loadPurchases();
+  }, [authHydrated, user?.id]);
+
+  const loadPurchases = async () => {
+    const { data, error } = await supabase
+      .from('purchases')
+      .select('id, revista_id, precio_pagado, estado, created_at')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false });
+    if (error) {
+      console.error('Error cargando compras:', error.message);
+      setPurchases([]);
+    } else {
+      setPurchases(data || []);
+    }
     setHydrated(true);
-  }, []);
-
-  const persist = (next) => {
-    setStore(next);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
   };
 
-  const getPurchases = (email) => (email ? store[email] || [] : []);
-
-  const addPurchases = (email, revistaIds) => {
-    if (!email || !revistaIds?.length) return;
-    const fecha = new Date().toISOString();
-    const previas = store[email] || [];
-    const idsExistentes = new Set(previas.map((p) => p.revistaId));
-    const nuevas = revistaIds
-      .filter((id) => !idsExistentes.has(id))
-      .map((revistaId) => ({ revistaId, fecha }));
-    persist({ ...store, [email]: [...previas, ...nuevas] });
+  const addPurchases = async (revistaIds) => {
+    if (!user) return { error: { code: 'NO_AUTH', message: 'No logueado' } };
+    if (!revistaIds?.length) return { error: { code: 'EMPTY', message: 'No hay items' } };
+    const rows = revistaIds.map((revistaId) => ({
+      user_id: user.id,
+      revista_id: revistaId,
+    }));
+    const { error } = await supabase
+      .from('purchases')
+      .upsert(rows, { onConflict: 'user_id,revista_id', ignoreDuplicates: true });
+    if (error) {
+      console.error('Error en compra:', error.message);
+      return { error };
+    }
+    await loadPurchases();
+    return { error: null };
   };
 
-  const hasPurchase = (email, revistaId) =>
-    getPurchases(email).some((p) => p.revistaId === revistaId);
+  const hasPurchase = (revistaId) =>
+    purchases.some((p) => p.revista_id === revistaId);
 
   return (
     <PurchasesContext.Provider
-      value={{ hydrated, getPurchases, addPurchases, hasPurchase }}
+      value={{ purchases, hydrated, addPurchases, hasPurchase }}
     >
       {children}
     </PurchasesContext.Provider>

@@ -1,34 +1,129 @@
-import { integrantes, secciones } from '../data/data';
+'use client';
+
+import { useState } from 'react';
+import { secciones } from '../data/data';
+import { useIntegrantes } from '../context/IntegrantesProvider';
+import { useEditMode } from '../context/EditModeProvider';
+import IntegranteEditModal from './IntegranteEditModal';
 
 /**
  * COMPONENTE INTEGRANTES
- * Muestra el equipo de Picnic con imágenes y descripciones
+ * Lista el equipo desde la DB. En edit mode, controles inline (CRUD).
  */
 function Integrantes() {
+  const {
+    integrantes,
+    hydrated,
+    createIntegrante,
+    updateIntegrante,
+    deleteIntegrante,
+    toggleVisible,
+    moveUp,
+    moveDown,
+  } = useIntegrantes();
+  const { editMode } = useEditMode();
+  const [editing, setEditing] = useState(null);
+
+  const handleDelete = async (i) => {
+    if (!confirm(`¿Borrar a "${i.nombre}"?`)) return;
+    const { error } = await deleteIntegrante(i.id);
+    if (error) alert('Error al borrar: ' + error.message);
+  };
+
+  const handleSave = async (form) => {
+    if (editing === 'new') return createIntegrante(form);
+    return updateIntegrante(editing.id, form);
+  };
+
   return (
     <section
       id={secciones.equipo.id}
-      className="seccion-placeholder seccion-final"
+      className={`seccion-placeholder seccion-final${editMode ? ' seccion--edit' : ''}`}
     >
       <div className="seccion-header">
         <h1>{secciones.equipo.titulo}</h1>
         <p className="seccion-descripcion">{secciones.equipo.descripcion}</p>
+        {editMode && (
+          <button
+            className="edit-add-btn"
+            onClick={() => setEditing('new')}
+            type="button"
+          >
+            + Nuevo integrante
+          </button>
+        )}
       </div>
       <div className="integrantes-container">
-        {integrantes.map((integrante) => (
-          <div key={integrante.id} className="integrante">
-            <img
-              src={integrante.image}
-              alt={integrante.nombre}
-              className="integrante-img"
-            />
-            <div className="info">
-              <h3>{integrante.nombre}</h3>
-              <p>{integrante.descripcion}</p>
+        {hydrated && integrantes.length === 0 ? (
+          <p className="seccion-descripcion">Próximamente.</p>
+        ) : (
+          integrantes.map((i, idx) => (
+            <div
+              key={i.id}
+              className={`integrante-wrapper${
+                !i.visible ? ' integrante-wrapper--hidden' : ''
+              }`}
+            >
+              <div className="integrante">
+                <img
+                  src={i.foto_path}
+                  alt={i.nombre}
+                  className="integrante-img"
+                />
+                <div className="info">
+                  <h3>{i.nombre}</h3>
+                  {i.rol && <p className="integrante-rol">{i.rol}</p>}
+                  {i.bio && <p>{i.bio}</p>}
+                </div>
+              </div>
+              {editMode && (
+                <div className="edit-controls">
+                  <button
+                    type="button"
+                    onClick={() => moveUp(i.id)}
+                    disabled={idx === 0}
+                    title="Subir"
+                  >
+                    ↑
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => moveDown(i.id)}
+                    disabled={idx === integrantes.length - 1}
+                    title="Bajar"
+                  >
+                    ↓
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => toggleVisible(i.id)}
+                  >
+                    {i.visible ? 'Ocultar' : 'Mostrar'}
+                  </button>
+                  <button type="button" onClick={() => setEditing(i)}>
+                    Editar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(i)}
+                    className="edit-delete"
+                  >
+                    Borrar
+                  </button>
+                </div>
+              )}
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
+
+      {editing !== null && (
+        <IntegranteEditModal
+          integrante={editing === 'new' ? null : editing}
+          onSave={handleSave}
+          onClose={() => setEditing(null)}
+        />
+      )}
     </section>
   );
 }

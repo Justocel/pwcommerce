@@ -1,40 +1,61 @@
 'use client';
 
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { revistas } from '../data/data';
 import { useAuth } from '../context/AuthProvider';
 import { useCart } from '../context/CartProvider';
 import { usePurchases } from '../context/PurchasesProvider';
+import { useRevistas } from '../context/RevistasProvider';
+import { trackEvent } from '@/lib/analytics';
 
 function CartPanel() {
   const router = useRouter();
   const { user } = useAuth();
   const { addPurchases } = usePurchases();
+  const { getRevistaById } = useRevistas();
   const {
     cart,
     removeFromCart,
     clearCart,
     showCart,
     setShowCart,
-    total,
   } = useCart();
+  const [checkingOut, setCheckingOut] = useState(false);
+  const [error, setError] = useState('');
 
   if (!showCart || cart.length === 0) return null;
 
-  const getRevistaById = (id) => revistas.find((r) => r.id === id);
+  const items = cart
+    .map((c) => {
+      const revista = getRevistaById(c.revista_id);
+      return revista ? { ...revista, revista_id: c.revista_id } : null;
+    })
+    .filter(Boolean);
 
-  const handleCheckout = () => {
+  const total = items.reduce((acc, r) => acc + Number(r.precio || 0), 0);
+
+  const handleCheckout = async () => {
     if (!user) {
       setShowCart(false);
       router.push('/login?next=/mis-revistas');
       return;
     }
-    addPurchases(
-      user.email,
-      cart.map((item) => item.id)
-    );
-    clearCart();
+    setError('');
+    setCheckingOut(true);
+    const revistaIds = cart.map((c) => c.revista_id);
+    const { error: err } = await addPurchases(revistaIds);
+    if (err) {
+      setError(err.message || 'No pudimos procesar la compra');
+      setCheckingOut(false);
+      return;
+    }
+    trackEvent('purchase', {
+      userId: user.id,
+      metadata: { revista_ids: revistaIds, total },
+    });
+    await clearCart();
     setShowCart(false);
+    setCheckingOut(false);
     router.push('/mis-revistas');
   };
 
@@ -51,38 +72,43 @@ function CartPanel() {
         </button>
       </div>
       <div className="cart-items">
-        {cart.map((cartItem) => {
-          const revista = getRevistaById(cartItem.id);
-          return (
-            <div key={cartItem.id} className="cart-item">
-              <img
-                src={revista?.image}
-                alt={`Revista ${revista?.numero}`}
-                className="cart-item-img"
-              />
-              <div className="cart-item-info">
-                <p className="cart-item-title">Revista #{revista?.numero}</p>
-                <p className="cart-item-price">
-                  ${revista?.precio} x {cartItem.cantidad} = $
-                  {revista && revista.precio * cartItem.cantidad}
-                </p>
-              </div>
-              <button
-                className="cart-remove-btn"
-                onClick={() => removeFromCart(cartItem.id)}
-                aria-label={`Eliminar Revista ${revista?.numero}`}
-              >
-                ✕
-              </button>
+        {items.map((revista) => (
+          <div key={revista.revista_id} className="cart-item">
+            <img
+              src={revista.portada_path}
+              alt={`Edición ${revista.numero_edicion}`}
+              className="cart-item-img"
+            />
+            <div className="cart-item-info">
+              <p className="cart-item-title">
+                {revista.titulo || `Edición ${revista.numero_edicion}`}
+              </p>
+              <p className="cart-item-price">${revista.precio}</p>
             </div>
-          );
-        })}
+            <button
+              className="cart-remove-btn"
+              onClick={() => removeFromCart(revista.revista_id)}
+              aria-label={`Eliminar Edición ${revista.numero_edicion}`}
+            >
+              ✕
+            </button>
+          </div>
+        ))}
       </div>
       <div className="cart-total">
         <strong>Total: ${total}</strong>
       </div>
-      <button className="cart-checkout-btn" onClick={handleCheckout}>
-        {user ? 'Comprar' : 'Iniciar sesión para comprar'}
+      {error && <p className="auth-error">{error}</p>}
+      <button
+        className="cart-checkout-btn"
+        onClick={handleCheckout}
+        disabled={checkingOut}
+      >
+        {checkingOut
+          ? 'Procesando…'
+          : user
+            ? 'Comprar'
+            : 'Iniciar sesión para comprar'}
       </button>
     </div>
   );

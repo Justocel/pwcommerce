@@ -18,7 +18,10 @@
 /out/
 
 #keys
-.env 
+.env
+
+# mock PDFs (solo para desarrollo del lector)
+/public/mock-revista.pdf
 
 # production
 /build

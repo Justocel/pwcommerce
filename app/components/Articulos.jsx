@@ -1,36 +1,146 @@
+'use client';
+
 import Link from 'next/link';
-import { articulos, secciones } from '../data/data';
+import { useState } from 'react';
+import { secciones } from '../data/data';
+import { useArticulos } from '../context/ArticulosProvider';
+import { useEditMode } from '../context/EditModeProvider';
+import ArticuloEditModal from './ArticuloEditModal';
 
 function Articulos() {
+  const {
+    articulos,
+    hydrated,
+    createArticulo,
+    updateArticulo,
+    deleteArticulo,
+    toggleVisible,
+    moveUp,
+    moveDown,
+  } = useArticulos();
+  const { editMode } = useEditMode();
+  const [editing, setEditing] = useState(null); // null | 'new' | <articulo>
+
+  const handleDelete = async (articulo) => {
+    if (!confirm(`¿Borrar el artículo "${articulo.titulo}"?`)) return;
+    const { error } = await deleteArticulo(articulo.id);
+    if (error) alert('Error al borrar: ' + error.message);
+  };
+
+  const handleSave = async (form) => {
+    if (editing === 'new') {
+      return createArticulo(form);
+    }
+    return updateArticulo(editing.id, form);
+  };
+
   return (
-    <section id={secciones.articulos.id} className="seccion-placeholder">
+    <section
+      id={secciones.articulos.id}
+      className={`seccion-placeholder${editMode ? ' seccion--edit' : ''}`}
+    >
       <div className="seccion-header">
         <h1>{secciones.articulos.titulo}</h1>
         <p className="seccion-descripcion">{secciones.articulos.descripcion}</p>
+        {editMode && (
+          <button
+            className="edit-add-btn"
+            onClick={() => setEditing('new')}
+            type="button"
+          >
+            + Nuevo artículo
+          </button>
+        )}
       </div>
 
       <div className="articulos-container">
-        {articulos.map((articulo) => (
-          <Link
-            key={articulo.id}
-            href={`/articulos/${articulo.slug}`}
-            className="articulo-card"
-          >
-            <img
-              src={articulo.image}
-              alt={articulo.titulo}
-              className="articulo-image"
-            />
-            <div className="articulo-overlay">
-              <span className="articulo-categoria">{articulo.categoria}</span>
-              <h2 className="articulo-titulo">{articulo.titulo}</h2>
-              <p className="articulo-subtitulo">
-                &ldquo;{articulo.subtitulo}&rdquo;
-              </p>
+        {hydrated && articulos.length === 0 ? (
+          <p className="seccion-descripcion">Próximamente.</p>
+        ) : (
+          articulos.map((articulo, idx) => (
+            <div
+              key={articulo.id}
+              className={`articulo-wrapper${
+                !articulo.visible ? ' articulo-wrapper--hidden' : ''
+              }`}
+            >
+              <Link
+                href={`/articulos/${articulo.slug}`}
+                className="articulo-card"
+              >
+                <img
+                  src={articulo.imagen_path}
+                  alt={articulo.titulo}
+                  className="articulo-image"
+                />
+                <div className="articulo-overlay">
+                  {articulo.categoria && (
+                    <span className="articulo-categoria">
+                      {articulo.categoria}
+                    </span>
+                  )}
+                  <h2 className="articulo-titulo">{articulo.titulo}</h2>
+                  {articulo.subtitulo && (
+                    <p className="articulo-subtitulo">
+                      &ldquo;{articulo.subtitulo}&rdquo;
+                    </p>
+                  )}
+                </div>
+              </Link>
+              {editMode && (
+                <div className="edit-controls">
+                  <button
+                    type="button"
+                    onClick={() => moveUp(articulo.id)}
+                    disabled={idx === 0}
+                    title="Subir"
+                  >
+                    ↑
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => moveDown(articulo.id)}
+                    disabled={idx === articulos.length - 1}
+                    title="Bajar"
+                  >
+                    ↓
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => toggleVisible(articulo.id)}
+                    title={articulo.visible ? 'Ocultar' : 'Mostrar'}
+                  >
+                    {articulo.visible ? 'Ocultar' : 'Mostrar'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setEditing(articulo)}
+                    title="Editar"
+                  >
+                    Editar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(articulo)}
+                    title="Borrar"
+                    className="edit-delete"
+                  >
+                    Borrar
+                  </button>
+                </div>
+              )}
             </div>
-          </Link>
-        ))}
+          ))
+        )}
       </div>
+
+      {editing !== null && (
+        <ArticuloEditModal
+          articulo={editing === 'new' ? null : editing}
+          onSave={handleSave}
+          onClose={() => setEditing(null)}
+        />
+      )}
     </section>
   );
 }

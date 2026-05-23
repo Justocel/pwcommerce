@@ -6,15 +6,19 @@ import Link from 'next/link';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useAuth } from '../context/AuthProvider';
+import { trackEvent } from '@/lib/analytics';
 
 function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { register } = useAuth();
+  const [nombre, setNombre] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [error, setError] = useState('');
+  const [info, setInfo] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const next = searchParams.get('next') || '/';
 
@@ -24,12 +28,33 @@ function RegisterForm() {
       setError('Completá email y contraseña');
       return;
     }
+    if (password.length < 6) {
+      setError('La contraseña debe tener al menos 6 caracteres');
+      return;
+    }
     if (password !== confirm) {
       setError('Las contraseñas no coinciden');
       return;
     }
-    await register(email);
-    router.push(next);
+    setError('');
+    setInfo('');
+    setLoading(true);
+    try {
+      const data = await register(email, password, nombre);
+      trackEvent('signup', { userId: data?.user?.id || null });
+      if (!data.session) {
+        // Confirmación de email activada: el usuario tiene que clickear el link
+        setInfo(
+          'Te mandamos un mail para confirmar tu cuenta. Revisalo y volvé a iniciar sesión.'
+        );
+        setLoading(false);
+        return;
+      }
+      router.push(next);
+    } catch (err) {
+      setError(err.message || 'No pudimos crear la cuenta');
+      setLoading(false);
+    }
   };
 
   return (
@@ -41,6 +66,15 @@ function RegisterForm() {
           quieras.
         </p>
         <form onSubmit={handleSubmit} className="auth-form">
+          <label className="auth-field">
+            <span>Nombre</span>
+            <input
+              type="text"
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
+              autoComplete="name"
+            />
+          </label>
           <label className="auth-field">
             <span>Email</span>
             <input
@@ -72,8 +106,9 @@ function RegisterForm() {
             />
           </label>
           {error && <p className="auth-error">{error}</p>}
-          <button type="submit" className="auth-submit">
-            Crear cuenta
+          {info && <p className="auth-info">{info}</p>}
+          <button type="submit" className="auth-submit" disabled={loading}>
+            {loading ? 'Creando…' : 'Crear cuenta'}
           </button>
         </form>
         <p className="auth-alt">
@@ -81,10 +116,6 @@ function RegisterForm() {
           <Link href={`/login${next ? `?next=${next}` : ''}`}>
             Iniciá sesión
           </Link>
-        </p>
-        <p className="auth-disclaimer">
-          Modo demo: no se valida nada. Cuando se conecte la base de datos, los
-          datos se guardan en el servidor.
         </p>
       </div>
     </main>

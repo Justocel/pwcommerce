@@ -13,7 +13,19 @@
       "Bash(shopt -s dotglob)",
       "Bash(mv pwcommerce/* .)",
       "Bash(shopt -u dotglob)",
-      "Bash(git -C c:/Users/justo/pwcommerce status --short)"
+      "Bash(git -C c:/Users/justo/pwcommerce status --short)",
+      "Bash(git -C /home/justo/code/pwcommerce remote -v)",
+      "Bash(npm install *)",
+      "Bash(python3 -c \"import reportlab; print\\('reportlab OK'\\)\")",
+      "Bash(python3 -c \"import fpdf; print\\('fpdf OK'\\)\")",
+      "Bash(pip3 install *)",
+      "Bash(python3 -c \"from fpdf import FPDF; print\\('OK'\\)\")",
+      "Bash(python3)",
+      "Bash(mv /home/justo/code/pwcommerce/app/leer/\\\\[revistaId\\\\]/page.jsx /home/justo/code/pwcommerce/app/leer/\\\\[revistaId\\\\]/Reader.jsx)",
+      "Bash(openssl rand *)"
+    ],
+    "additionalDirectories": [
+      "/home/justo/code/pwcommerce/app/leer/[revistaId]"
     ]
   }
 }

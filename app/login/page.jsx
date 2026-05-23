@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useAuth } from '../context/AuthProvider';
+import { trackEvent } from '@/lib/analytics';
 
 function LoginForm() {
   const router = useRouter();
@@ -17,14 +18,24 @@ function LoginForm() {
 
   const next = searchParams.get('next') || '/';
 
+  const [loading, setLoading] = useState(false);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email || !password) {
       setError('Completá email y contraseña');
       return;
     }
-    await login(email);
-    router.push(next);
+    setError('');
+    setLoading(true);
+    try {
+      const data = await login(email, password);
+      trackEvent('login', { userId: data?.user?.id || null });
+      router.push(next);
+    } catch (err) {
+      setError(err.message || 'No pudimos iniciar sesión');
+      setLoading(false);
+    }
   };
 
   return (
@@ -56,8 +67,8 @@ function LoginForm() {
             />
           </label>
           {error && <p className="auth-error">{error}</p>}
-          <button type="submit" className="auth-submit">
-            Entrar
+          <button type="submit" className="auth-submit" disabled={loading}>
+            {loading ? 'Entrando…' : 'Entrar'}
           </button>
         </form>
         <p className="auth-alt">
@@ -65,10 +76,6 @@ function LoginForm() {
           <Link href={`/registrarme${next ? `?next=${next}` : ''}`}>
             Registrate
           </Link>
-        </p>
-        <p className="auth-disclaimer">
-          Modo demo: cualquier email y contraseña funcionan. Cuando se conecte
-          la base de datos, se valida acá.
         </p>
       </div>
     </main>
