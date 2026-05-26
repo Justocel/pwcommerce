@@ -2205,3 +2205,52 @@ footer p {
   color: var(--color-primary);
   text-decoration: none;
 }
+
+/* ========== ERROR PAGES (404 / error boundary) ========== */
+.error-page {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-2xl) var(--spacing-lg);
+}
+.error-content {
+  text-align: center;
+  max-width: 600px;
+}
+.error-code {
+  font-size: clamp(72px, 14vw, 120px);
+  font-weight: 800;
+  margin: 0 0 var(--spacing-sm) 0;
+  color: var(--color-primary);
+  letter-spacing: -0.05em;
+  line-height: 1;
+}
+.error-title {
+  font-size: clamp(22px, 4vw, 32px);
+  margin: 0 0 var(--spacing-md) 0;
+}
+.error-message {
+  font-size: 17px;
+  opacity: 0.75;
+  margin: 0 0 var(--spacing-xl) 0;
+  line-height: 1.5;
+}
+.error-actions {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.error-dev-detail {
+  background: rgba(0, 0, 0, 0.06);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-sm);
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 12px;
+  text-align: left;
+  overflow-x: auto;
+  margin: 0 0 var(--spacing-md) 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
