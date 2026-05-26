@@ -21,18 +21,27 @@ function usePrefersReducedMotion() {
   return reduced;
 }
 
-const TEXTURE_PATHS = [
-  '/Revistas/7.png',
-  '/Revistas/contratapa.jpg',
-  '/Revistas/lomo.jpg',
-  '/Revistas/paginas-h.jpg',
-  '/Revistas/paginas-v.jpg',
-];
+const DEFAULT_PORTADA = '/Revistas/7.png';
+const STATIC_TEXTURES = {
+  contratapa: '/Revistas/contratapa.jpg',
+  lomo: '/Revistas/lomo.jpg',
+  paginasH: '/Revistas/paginas-h.jpg',
+  paginasV: '/Revistas/paginas-v.jpg',
+};
 
-function MagazineMesh() {
+function MagazineMesh({ portadaPath }) {
+  // useLoader cachea por URL. Si portadaPath cambia (editor sube nueva portada),
+  // se trae la textura nueva y re-renderiza. Las texturas estáticas (lomo,
+  // contratapa, páginas) son placeholders compartidos entre todas las ediciones.
   const [portada, contraTex, lomoTex, pagH, pagV] = useLoader(
     TextureLoader,
-    TEXTURE_PATHS
+    [
+      portadaPath || DEFAULT_PORTADA,
+      STATIC_TEXTURES.contratapa,
+      STATIC_TEXTURES.lomo,
+      STATIC_TEXTURES.paginasH,
+      STATIC_TEXTURES.paginasV,
+    ]
   );
 
   [portada, contraTex, lomoTex, pagH, pagV].forEach((t) => {
@@ -66,14 +75,19 @@ function MagazineMesh() {
   );
 }
 
-export default function Revista3D() {
+export default function Revista3D({ portadaPath }) {
   const reducedMotion = usePrefersReducedMotion();
 
   return (
     <div className="revista-3d-canvas">
       <Canvas camera={{ position: [0, 0, 0.75], fov: 35 }} dpr={[1, 2]}>
         <Suspense fallback={null}>
-          <MagazineMesh />
+          {/* key fuerza re-mount cuando cambia la portada — evita problemas de
+              cache de Suspense entre re-renders con distintos arrays de URLs */}
+          <MagazineMesh
+            key={portadaPath || 'default'}
+            portadaPath={portadaPath}
+          />
         </Suspense>
         <OrbitControls
           enablePan={false}

@@ -175,7 +175,7 @@ function Revistas() {
             const enCart = hasInCart(revista.id);
             return (
               <div key={revista.id} className="revista-item revista-item--3d">
-                <Revista3D />
+                <Revista3D portadaPath={revista.portada_path} />
                 <button
                   className="revista-add-btn revista-add-btn--3d"
                   onClick={() => handleAdd(revista.id)}
