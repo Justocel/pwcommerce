@@ -7,6 +7,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useAuth } from '../context/AuthProvider';
 import { trackEvent } from '@/lib/analytics';
+import { safeNextPath } from '../utils/utils';
 
 function LoginForm() {
   const router = useRouter();
@@ -16,7 +17,7 @@ function LoginForm() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const next = searchParams.get('next') || '/';
+  const next = safeNextPath(searchParams.get('next'));
 
   const [loading, setLoading] = useState(false);
 

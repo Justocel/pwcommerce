@@ -7,6 +7,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useAuth } from '../context/AuthProvider';
 import { trackEvent } from '@/lib/analytics';
+import { safeNextPath } from '../utils/utils';
 
 function RegisterForm() {
   const router = useRouter();
@@ -20,7 +21,7 @@ function RegisterForm() {
   const [info, setInfo] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const next = searchParams.get('next') || '/';
+  const next = safeNextPath(searchParams.get('next'));
 
   const handleSubmit = async (e) => {
     e.preventDefault();

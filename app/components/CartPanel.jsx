@@ -7,6 +7,7 @@ import { useCart } from '../context/CartProvider';
 import { usePurchases } from '../context/PurchasesProvider';
 import { useRevistas } from '../context/RevistasProvider';
 import { trackEvent } from '@/lib/analytics';
+import { friendlyCartError } from '@/lib/errorMessages';
 
 function CartPanel() {
   const router = useRouter();
@@ -32,6 +33,10 @@ function CartPanel() {
     })
     .filter(Boolean);
 
+  // Items que están en cart_items pero cuya revista ya no existe / no está activa
+  // (ej: el editor la borró o desactivó mientras estaba en tu carrito).
+  const unavailableCount = cart.length - items.length;
+
   const total = items.reduce((acc, r) => acc + Number(r.precio || 0), 0);
 
   const handleCheckout = async () => {
@@ -42,10 +47,16 @@ function CartPanel() {
     }
     setError('');
     setCheckingOut(true);
-    const revistaIds = cart.map((c) => c.revista_id);
+    // Solo compramos los items que siguen disponibles.
+    const revistaIds = items.map((r) => r.revista_id);
+    if (revistaIds.length === 0) {
+      setError('Ninguna de las revistas del carrito está disponible.');
+      setCheckingOut(false);
+      return;
+    }
     const { error: err } = await addPurchases(revistaIds);
     if (err) {
-      setError(err.message || 'No pudimos procesar la compra');
+      setError(friendlyCartError(err));
       setCheckingOut(false);
       return;
     }
@@ -98,6 +109,13 @@ function CartPanel() {
       <div className="cart-total">
         <strong>Total: ${total}</strong>
       </div>
+      {unavailableCount > 0 && (
+        <p className="cart-warning">
+          {unavailableCount === 1
+            ? '1 revista de tu carrito ya no está disponible y no se va a comprar.'
+            : `${unavailableCount} revistas de tu carrito ya no están disponibles y no se van a comprar.`}
+        </p>
+      )}
       {error && <p className="auth-error">{error}</p>}
       <button
         className="cart-checkout-btn"

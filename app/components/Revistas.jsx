@@ -9,6 +9,7 @@ import { useCart } from '../context/CartProvider';
 import { useRevistas } from '../context/RevistasProvider';
 import { useEditMode } from '../context/EditModeProvider';
 import { trackEvent } from '@/lib/analytics';
+import { friendlyCartError } from '@/lib/errorMessages';
 import RevistaEditModal from './RevistaEditModal';
 
 const Revista3D = dynamic(() => import('./Revista3D'), {
@@ -37,20 +38,24 @@ function Revistas() {
   const { addToCart, setShowCart, hasInCart } = useCart();
   const { editMode } = useEditMode();
   const [editing, setEditing] = useState(null); // null | 'new' | <revista>
+  const [addError, setAddError] = useState('');
 
   const handleAdd = async (revistaId) => {
     if (!user) {
       router.push('/login?next=/');
       return;
     }
+    setAddError('');
     const { error } = await addToCart(revistaId);
-    if (!error) {
-      trackEvent('add_to_cart', {
-        userId: user.id,
-        metadata: { revista_id: revistaId },
-      });
-      setShowCart(true);
+    if (error) {
+      setAddError(friendlyCartError(error));
+      return;
     }
+    trackEvent('add_to_cart', {
+      userId: user.id,
+      metadata: { revista_id: revistaId },
+    });
+    setShowCart(true);
   };
 
   const handleSave = async (payload) => {
@@ -191,6 +196,7 @@ function Revistas() {
               </div>
             );
           })}
+          {addError && <p className="cart-warning">{addError}</p>}
         </div>
       )}
 

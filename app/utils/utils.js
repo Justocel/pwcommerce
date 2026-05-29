@@ -44,6 +44,19 @@ export const classNames = (classes) =>
     .filter((key) => classes[key])
     .join(' ');
 
+/**
+ * Sanitiza el parámetro `next` de los redirects post-login para evitar open
+ * redirects. Solo permite paths internos (empiezan con "/" pero no "//").
+ * Cualquier URL externa o protocol-relative cae al fallback "/".
+ */
+export const safeNextPath = (next, fallback = '/') => {
+  if (!next || typeof next !== 'string') return fallback;
+  if (!next.startsWith('/')) return fallback; // bloquea https://, //, etc.
+  if (next.startsWith('//')) return fallback; // protocol-relative → externo
+  if (next.includes('://')) return fallback;
+  return next;
+};
+
 const Utils = {
   formatDate,
   isEventFuture,
