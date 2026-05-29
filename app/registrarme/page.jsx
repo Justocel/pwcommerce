@@ -7,7 +7,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useAuth } from '../context/AuthProvider';
 import { trackEvent } from '@/lib/analytics';
-import { safeNextPath } from '../utils/utils';
+import { safeNextPath, isValidEmail } from '../utils/utils';
 
 function RegisterForm() {
   const router = useRouter();
@@ -27,6 +27,10 @@ function RegisterForm() {
     e.preventDefault();
     if (!email || !password) {
       setError('Completá email y contraseña');
+      return;
+    }
+    if (!isValidEmail(email)) {
+      setError('El email no tiene un formato válido');
       return;
     }
     if (password.length < 6) {

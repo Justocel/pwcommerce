@@ -32,7 +32,7 @@ export function PurchasesProvider({ children }) {
   const loadPurchases = async () => {
     const { data, error } = await supabase
       .from('purchases')
-      .select('id, revista_id, precio_pagado, estado, created_at')
+      .select('id, revista_id, order_id, precio_pagado, estado, created_at')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false });
     if (error) {
@@ -47,9 +47,12 @@ export function PurchasesProvider({ children }) {
   const addPurchases = async (revistaIds) => {
     if (!user) return { error: { code: 'NO_AUTH', message: 'No logueado' } };
     if (!revistaIds?.length) return { error: { code: 'EMPTY', message: 'No hay items' } };
+    // order_id compartido agrupa los items de este checkout en una orden.
+    const orderId = crypto.randomUUID();
     const rows = revistaIds.map((revistaId) => ({
       user_id: user.id,
       revista_id: revistaId,
+      order_id: orderId,
     }));
     const { error } = await supabase
       .from('purchases')

@@ -2265,3 +2265,76 @@ footer p {
   font-size: var(--font-size-sm);
   text-align: center;
 }
+
+/* ========== HISTORIAL DE ÓRDENES ========== */
+.ordenes-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--spacing-lg);
+}
+.orden-card {
+  background: var(--color-light);
+  color: var(--color-dark);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+.orden-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: rgba(0, 0, 0, 0.04);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+.orden-header > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.orden-fecha {
+  font-weight: 700;
+  color: var(--color-dark);
+}
+.orden-items-count {
+  font-size: var(--font-size-sm);
+  color: rgba(0, 0, 0, 0.55);
+}
+.orden-total {
+  font-size: 18px;
+  color: var(--color-primary);
+  font-variant-numeric: tabular-nums;
+}
+.orden-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.orden-item {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: var(--spacing-md);
+  align-items: center;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+.orden-item:last-child {
+  border-bottom: none;
+}
+.orden-item-precio {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.7;
+}
+.orden-item-leer {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+}
+.orden-item-leer:hover {
+  text-decoration: underline;
+}

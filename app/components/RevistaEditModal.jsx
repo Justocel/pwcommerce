@@ -103,6 +103,7 @@ export default function RevistaEditModal({
               type="text"
               value={form.titulo}
               onChange={setField('titulo')}
+              maxLength={200}
               required
             />
           </label>
@@ -112,6 +113,7 @@ export default function RevistaEditModal({
               value={form.descripcion}
               onChange={setField('descripcion')}
               rows={3}
+              maxLength={1000}
             />
           </label>
           <label className="auth-field">

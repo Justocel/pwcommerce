@@ -57,6 +57,15 @@ export const safeNextPath = (next, fallback = '/') => {
   return next;
 };
 
+/**
+ * Validación de email para feedback inmediato en el cliente. Supabase Auth
+ * valida de nuevo server-side; esto solo evita el round-trip si está mal.
+ */
+export const isValidEmail = (email) => {
+  if (!email || typeof email !== 'string') return false;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+};
+
 const Utils = {
   formatDate,
   isEventFuture,

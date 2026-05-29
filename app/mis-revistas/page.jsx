@@ -67,6 +67,9 @@ function MisRevistasContent() {
         <p className="seccion-descripcion">
           Hola, {user.nombre || user.email}. Acá vas a ver todo lo que compraste.
         </p>
+        <Link href="/mis-ordenes" className="auth-submit auth-submit--ghost">
+          Ver historial de órdenes
+        </Link>
       </div>
 
       {aviso && <div className="mis-revistas-aviso">{aviso}</div>}

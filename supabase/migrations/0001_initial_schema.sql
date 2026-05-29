@@ -69,6 +69,7 @@ CREATE TABLE IF NOT EXISTS purchases (
   id                  uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id             uuid NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
   revista_id          uuid NOT NULL REFERENCES revistas(id) ON DELETE RESTRICT,
+  order_id            uuid,   -- agrupa items comprados en un mismo checkout
   precio_pagado       numeric(10,2) NOT NULL DEFAULT 0 CHECK (precio_pagado >= 0),
   estado              purchase_estado NOT NULL DEFAULT 'completada',
   payment_provider_id text,
@@ -144,6 +145,7 @@ CREATE INDEX IF NOT EXISTS analytics_events_type_created_idx
 CREATE INDEX IF NOT EXISTS analytics_events_user_created_idx
   ON analytics_events (user_id, created_at DESC) WHERE user_id IS NOT NULL;
 CREATE INDEX IF NOT EXISTS purchases_user_idx        ON purchases   (user_id);
+CREATE INDEX IF NOT EXISTS purchases_order_idx       ON purchases   (order_id) WHERE order_id IS NOT NULL;
 CREATE INDEX IF NOT EXISTS cart_items_user_idx       ON cart_items  (user_id);
 CREATE INDEX IF NOT EXISTS articulos_visible_idx     ON articulos   (visible, orden);
 CREATE INDEX IF NOT EXISTS integrantes_visible_idx   ON integrantes (visible, orden);

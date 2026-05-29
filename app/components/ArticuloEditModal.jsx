@@ -98,6 +98,7 @@ export default function ArticuloEditModal({ articulo, onSave, onClose }) {
                   slug: isNew && !f.slug ? slugify(v) : f.slug,
                 }));
               }}
+              maxLength={200}
               required
             />
           </label>
@@ -108,6 +109,7 @@ export default function ArticuloEditModal({ articulo, onSave, onClose }) {
               value={form.slug}
               onChange={setField('slug')}
               pattern="[a-z0-9-]+"
+              maxLength={100}
               required
             />
           </label>
@@ -118,6 +120,7 @@ export default function ArticuloEditModal({ articulo, onSave, onClose }) {
               value={form.categoria}
               onChange={setField('categoria')}
               placeholder="ej: ENTREVISTAS"
+              maxLength={50}
             />
           </label>
           <label className="auth-field">
@@ -126,6 +129,7 @@ export default function ArticuloEditModal({ articulo, onSave, onClose }) {
               type="text"
               value={form.subtitulo}
               onChange={setField('subtitulo')}
+              maxLength={300}
             />
           </label>
           <div className="auth-field">
@@ -142,6 +146,7 @@ export default function ArticuloEditModal({ articulo, onSave, onClose }) {
               value={form.contenido}
               onChange={setField('contenido')}
               rows={10}
+              maxLength={20000}
             />
           </label>
           {error && <p className="auth-error">{error}</p>}

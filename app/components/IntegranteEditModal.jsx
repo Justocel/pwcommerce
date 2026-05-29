@@ -74,6 +74,7 @@ export default function IntegranteEditModal({ integrante, onSave, onClose }) {
               type="text"
               value={form.nombre}
               onChange={setField('nombre')}
+              maxLength={100}
               required
             />
           </label>
@@ -84,6 +85,7 @@ export default function IntegranteEditModal({ integrante, onSave, onClose }) {
               value={form.rol}
               onChange={setField('rol')}
               placeholder="ej: Diseño, Fotografía"
+              maxLength={100}
             />
           </label>
           <div className="auth-field">
@@ -100,6 +102,7 @@ export default function IntegranteEditModal({ integrante, onSave, onClose }) {
               value={form.bio}
               onChange={setField('bio')}
               rows={5}
+              maxLength={2000}
             />
           </label>
           {error && <p className="auth-error">{error}</p>}
