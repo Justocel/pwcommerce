@@ -12,12 +12,12 @@ import { friendlyCartError } from '@/lib/errorMessages';
 function CartPanel() {
   const router = useRouter();
   const { user } = useAuth();
-  const { addPurchases } = usePurchases();
+  const { crearOrden } = usePurchases();
   const { getRevistaById } = useRevistas();
   const {
     cart,
     removeFromCart,
-    clearCart,
+    refreshCart,
     showCart,
     setShowCart,
   } = useCart();
@@ -47,14 +47,15 @@ function CartPanel() {
     }
     setError('');
     setCheckingOut(true);
-    // Solo compramos los items que siguen disponibles.
     const revistaIds = items.map((r) => r.revista_id);
     if (revistaIds.length === 0) {
       setError('Ninguna de las revistas del carrito está disponible.');
       setCheckingOut(false);
       return;
     }
-    const { error: err } = await addPurchases(revistaIds);
+    // crear_orden_completa() en Postgres: inserta purchases + vacía carrito
+    // en la misma transacción. Si falla algo, todo se revierte.
+    const { data, error: err } = await crearOrden('mock');
     if (err) {
       setError(friendlyCartError(err));
       setCheckingOut(false);
@@ -62,9 +63,13 @@ function CartPanel() {
     }
     trackEvent('purchase', {
       userId: user.id,
-      metadata: { revista_ids: revistaIds, total },
+      metadata: {
+        order_id: data?.order_id,
+        items_count: data?.items_count,
+        total: data?.total,
+      },
     });
-    await clearCart();
+    await refreshCart();
     setShowCart(false);
     setCheckingOut(false);
     router.push('/mis-revistas');

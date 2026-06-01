@@ -7,9 +7,13 @@ import { useAuth } from './AuthProvider';
 /**
  * PURCHASES PROVIDER — persistente en purchases (Supabase).
  *
- * - addPurchases() inserta filas con (user_id, revista_id). El trigger
- *   snapshot_purchase_price() pisa precio_pagado con revistas.precio y
- *   estado='completada' del lado del server (no se puede spoofear desde el cliente).
+ * - crearOrden() llama al stored procedure crear_orden_completa() vía RPC.
+ *   El procedure corre en una sola transacción server-side: inserta purchases
+ *   + vacía el carrito atómicamente. Si algo falla (carrito vacío, revista
+ *   inactiva, constraint violation), todo se revierte — no queda compra a
+ *   medias ni carrito a medias.
+ * - Total y precio_pagado los calcula el server desde revistas.precio, no se
+ *   pueden spoofear desde el cliente.
  * - hasPurchase(revistaId) responde sin consulta — usa el cache cargado.
  */
 const PurchasesContext = createContext(null);
@@ -32,7 +36,7 @@ export function PurchasesProvider({ children }) {
   const loadPurchases = async () => {
     const { data, error } = await supabase
       .from('purchases')
-      .select('id, revista_id, order_id, precio_pagado, estado, created_at')
+      .select('id, revista_id, order_id, precio_pagado, estado, metodo_pago, created_at')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false });
     if (error) {
@@ -44,25 +48,21 @@ export function PurchasesProvider({ children }) {
     setHydrated(true);
   };
 
-  const addPurchases = async (revistaIds) => {
-    if (!user) return { error: { code: 'NO_AUTH', message: 'No logueado' } };
-    if (!revistaIds?.length) return { error: { code: 'EMPTY', message: 'No hay items' } };
-    // order_id compartido agrupa los items de este checkout en una orden.
-    const orderId = crypto.randomUUID();
-    const rows = revistaIds.map((revistaId) => ({
-      user_id: user.id,
-      revista_id: revistaId,
-      order_id: orderId,
-    }));
-    const { error } = await supabase
-      .from('purchases')
-      .upsert(rows, { onConflict: 'user_id,revista_id', ignoreDuplicates: true });
+  /**
+   * Crea una orden atómica a partir del carrito del usuario.
+   * Returns: { data: { order_id, total, items_count } | null, error }
+   */
+  const crearOrden = async (metodoPago = 'mock') => {
+    if (!user) return { data: null, error: { code: 'NO_AUTH', message: 'No logueado' } };
+    const { data, error } = await supabase.rpc('crear_orden_completa', {
+      p_metodo_pago: metodoPago,
+    });
     if (error) {
-      console.error('Error en compra:', error.message);
-      return { error };
+      console.error('Error creando orden:', error.message);
+      return { data: null, error };
     }
     await loadPurchases();
-    return { error: null };
+    return { data, error: null };
   };
 
   const hasPurchase = (revistaId) =>
@@ -70,7 +70,7 @@ export function PurchasesProvider({ children }) {
 
   return (
     <PurchasesContext.Provider
-      value={{ purchases, hydrated, addPurchases, hasPurchase }}
+      value={{ purchases, hydrated, crearOrden, hasPurchase }}
     >
       {children}
     </PurchasesContext.Provider>

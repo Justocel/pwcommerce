@@ -105,6 +105,7 @@ export function CartProvider({ children }) {
         addToCart,
         removeFromCart,
         clearCart,
+        refreshCart: loadCart,
         hasInCart,
         showCart,
         setShowCart,

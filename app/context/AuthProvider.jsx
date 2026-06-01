@@ -108,7 +108,10 @@ export function AuthProvider({ children }) {
       }
     : null;
 
-  const isEditor = profile?.role === 'editor';
+  // admin es superset de editor: el isEditor del front cubre ambos roles,
+  // pero isAdmin permite restringir UI a operaciones sensibles (pagos, roles).
+  const isAdmin = profile?.role === 'admin';
+  const isEditor = profile?.role === 'editor' || isAdmin;
 
   return (
     <AuthContext.Provider
@@ -118,6 +121,7 @@ export function AuthProvider({ children }) {
         session,
         hydrated,
         isEditor,
+        isAdmin,
         login,
         register,
         logout,
