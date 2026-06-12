@@ -1,30 +1,22 @@
 -- =============================================================================
 -- 0002 — TRANSACCIONES + PREPARACIÓN PARA PAGO REAL
 -- =============================================================================
--- 1) Sistema de roles ampliado: 'admin' además de 'user'/'editor'.
--- 2) Estados de pago ampliados para reflejar el ciclo real de una orden.
--- 3) Campos metodo_pago / referencia_pago / pagado_en en purchases.
--- 4) Stored procedure crear_orden_completa() que arma la orden atómicamente
---    (purchases + vaciado del carrito en una sola transacción).
+-- PRIMERO aplicar 0002a_enums.sql (agrega valores nuevos a los enums). Postgres
+-- no deja usar un valor de enum recién creado en la misma transacción.
 --
--- Aplicar en Supabase Dashboard → SQL Editor. Es idempotente.
+-- Este archivo:
+-- 1) is_admin() + is_editor() actualizado para incluir admin como superset.
+-- 2) Campos metodo_pago / referencia_pago / pagado_en en purchases.
+-- 3) Storage RLS extendida para aceptar 'pagada' y 'confirmada' como acceso.
+-- 4) Stored procedure crear_orden_completa() atómico.
+--
+-- Idempotente.
 -- =============================================================================
 
 
 -- -----------------------------------------------------------------------------
--- 1. ROLES — agregar 'admin'
+-- 1. ROLES — is_admin() y is_editor() ampliado
 -- -----------------------------------------------------------------------------
--- ADD VALUE IF NOT EXISTS no se puede correr dentro de un bloque atomico junto
--- a un uso del nuevo valor, por eso lo separamos en un DO propio.
-DO $$ BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_enum
-    WHERE enumtypid = 'user_role'::regtype AND enumlabel = 'admin'
-  ) THEN
-    ALTER TYPE user_role ADD VALUE 'admin';
-  END IF;
-END $$;
-
 -- is_admin(): true solo para admin. is_editor() ya cubre tanto editor como
 -- admin (admin es superset). Las policies existentes siguen funcionando.
 CREATE OR REPLACE FUNCTION is_admin()
@@ -60,36 +52,7 @@ GRANT EXECUTE ON FUNCTION is_editor() TO authenticated, anon;
 
 
 -- -----------------------------------------------------------------------------
--- 2. ESTADOS DE PAGO — ampliar enum
--- -----------------------------------------------------------------------------
--- Ciclo de una orden de revista digital:
---   pendiente  → creada, esperando pago (MP genera link)
---   pagada     → MP confirmó que cobró
---   confirmada → ya entregamos acceso al PDF (equivalente a 'entregada' para producto físico)
---   cancelada  → el user canceló o MP rechazó
---   reembolsada → devolución
--- 'completada' queda como alias de 'confirmada' para compatibilidad con datos viejos.
-DO $$ BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_enum WHERE enumtypid='purchase_estado'::regtype AND enumlabel='pagada') THEN
-    ALTER TYPE purchase_estado ADD VALUE 'pagada';
-  END IF;
-END $$;
-
-DO $$ BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_enum WHERE enumtypid='purchase_estado'::regtype AND enumlabel='confirmada') THEN
-    ALTER TYPE purchase_estado ADD VALUE 'confirmada';
-  END IF;
-END $$;
-
-DO $$ BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_enum WHERE enumtypid='purchase_estado'::regtype AND enumlabel='cancelada') THEN
-    ALTER TYPE purchase_estado ADD VALUE 'cancelada';
-  END IF;
-END $$;
-
-
--- -----------------------------------------------------------------------------
--- 3. CAMPOS DE PAGO en purchases
+-- 2. CAMPOS DE PAGO en purchases
 -- -----------------------------------------------------------------------------
 ALTER TABLE purchases
   ADD COLUMN IF NOT EXISTS metodo_pago      text,        -- 'mock' | 'mercadopago' | 'stripe' | ...
@@ -102,7 +65,7 @@ CREATE INDEX IF NOT EXISTS purchases_referencia_idx
 
 
 -- -----------------------------------------------------------------------------
--- 4. ACCESO AL PDF — extender RLS de storage para aceptar estados "pagados"
+-- 3. ACCESO AL PDF — extender RLS de storage para aceptar estados "pagados"
 -- -----------------------------------------------------------------------------
 -- Cuando integremos MP, las purchases nacerán 'pagada' o 'confirmada'.
 -- Tanto 'completada' (legacy) como 'pagada' y 'confirmada' habilitan acceso.
@@ -124,7 +87,7 @@ CREATE POLICY revistas_pdf_select ON storage.objects
 
 
 -- -----------------------------------------------------------------------------
--- 5. STORED PROCEDURE — crear_orden_completa()
+-- 4. STORED PROCEDURE — crear_orden_completa()
 -- -----------------------------------------------------------------------------
 -- Atomicidad: toda función PL/pgSQL corre en una transacción implícita.
 -- Si cualquier sentencia falla (RAISE, violación de constraint, etc), TODO

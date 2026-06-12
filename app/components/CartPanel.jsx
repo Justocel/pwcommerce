@@ -4,15 +4,13 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../context/AuthProvider';
 import { useCart } from '../context/CartProvider';
-import { usePurchases } from '../context/PurchasesProvider';
 import { useRevistas } from '../context/RevistasProvider';
 import { trackEvent } from '@/lib/analytics';
 import { friendlyCartError } from '@/lib/errorMessages';
 
 function CartPanel() {
   const router = useRouter();
-  const { user } = useAuth();
-  const { crearOrden } = usePurchases();
+  const { user, session } = useAuth();
   const { getRevistaById } = useRevistas();
   const {
     cart,
@@ -33,46 +31,48 @@ function CartPanel() {
     })
     .filter(Boolean);
 
-  // Items que están en cart_items pero cuya revista ya no existe / no está activa
-  // (ej: el editor la borró o desactivó mientras estaba en tu carrito).
   const unavailableCount = cart.length - items.length;
-
   const total = items.reduce((acc, r) => acc + Number(r.precio || 0), 0);
 
   const handleCheckout = async () => {
-    if (!user) {
+    if (!user || !session) {
       setShowCart(false);
       router.push('/login?next=/mis-revistas');
       return;
     }
     setError('');
     setCheckingOut(true);
-    const revistaIds = items.map((r) => r.revista_id);
-    if (revistaIds.length === 0) {
-      setError('Ninguna de las revistas del carrito está disponible.');
-      setCheckingOut(false);
-      return;
-    }
-    // crear_orden_completa() en Postgres: inserta purchases + vacía carrito
-    // en la misma transacción. Si falla algo, todo se revierte.
-    const { data, error: err } = await crearOrden('mock');
-    if (err) {
+    try {
+      // Pide al server crear la preferencia de MP. El RPC marca las purchases
+      // como 'pendiente' (no se vacía el carrito hasta que llega el webhook).
+      const resp = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+      const data = await resp.json();
+      if (!resp.ok) {
+        setError(friendlyCartError({ code: data.code, message: data.error }));
+        setCheckingOut(false);
+        return;
+      }
+      trackEvent('purchase', {
+        userId: user.id,
+        metadata: {
+          order_id: data.order_id,
+          preference_id: data.preference_id,
+          total,
+        },
+      });
+      await refreshCart();
+      // Redirigir al checkout de MP. En sandbox/test el init_point ya es de prueba.
+      window.location.href = data.init_point;
+    } catch (err) {
+      console.error('checkout error:', err);
       setError(friendlyCartError(err));
       setCheckingOut(false);
-      return;
     }
-    trackEvent('purchase', {
-      userId: user.id,
-      metadata: {
-        order_id: data?.order_id,
-        items_count: data?.items_count,
-        total: data?.total,
-      },
-    });
-    await refreshCart();
-    setShowCart(false);
-    setCheckingOut(false);
-    router.push('/mis-revistas');
   };
 
   return (
@@ -130,7 +130,7 @@ function CartPanel() {
         {checkingOut
           ? 'Procesando…'
           : user
-            ? 'Comprar'
+            ? 'Pagar con Mercado Pago'
             : 'Iniciar sesión para comprar'}
       </button>
     </div>

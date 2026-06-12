@@ -2338,3 +2338,45 @@ footer p {
 .orden-item-leer:hover {
   text-decoration: underline;
 }
+
+/* ============================================================================
+ * Resultado de pago (/pago/exito, /pendiente, /error)
+ * ============================================================================ */
+.pago-resultado {
+  max-width: 540px;
+  margin: 0 auto;
+  text-align: center;
+  background: var(--color-light);
+  color: var(--color-dark);
+  border-radius: 12px;
+  padding: var(--spacing-xl) var(--spacing-lg);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+.pago-resultado h1 {
+  font-size: var(--font-size-xl);
+  margin: 0 0 var(--spacing-md);
+}
+.pago-resultado--exito h1 { color: #1f7a3a; }
+.pago-resultado--pendiente h1 { color: #b07d00; }
+.pago-resultado--error h1 { color: #b03030; }
+.pago-resultado-sub {
+  font-size: var(--font-size-md);
+  margin: 0 0 var(--spacing-md);
+  opacity: 0.85;
+}
+.pago-resultado-msg {
+  font-size: var(--font-size-sm);
+  margin: 0 0 var(--spacing-lg);
+  opacity: 0.75;
+}
+.pago-resultado-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  align-items: stretch;
+}
+.pago-resultado-loading {
+  margin-top: var(--spacing-md);
+  font-size: var(--font-size-sm);
+  opacity: 0.6;
+}
