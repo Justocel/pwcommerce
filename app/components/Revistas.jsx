@@ -94,9 +94,7 @@ function Revistas() {
 
   const activas = revistas.filter((r) => r.activa);
 
-  // Coverflow: todas las activas visibles a la vez. La actual al centro grande
-  // con el 3D; las otras como thumbnails 2D clickables, ordenadas por su
-  // posición relativa (anteriores a la izquierda, posteriores a la derecha).
+  // Carrusel: clamp del índice por si la lista cambia (ej. desactivan una edición).
   const safeIdx = activas.length === 0 ? 0 : Math.min(carouselIdx, activas.length - 1);
   const current = activas[safeIdx] || null;
   const goPrev = () =>
@@ -200,69 +198,65 @@ function Revistas() {
             </p>
           )}
           {current && (
-            <div
-              className="revista-coverflow"
-              data-count={activas.length}
-            >
-              {activas.map((r, idx) => {
-                const isCurrent = idx === safeIdx;
-                const distance = idx - safeIdx;
-                if (isCurrent) {
-                  return (
-                    <div
-                      key={r.id}
-                      className="revista-coverflow-item revista-coverflow-item--current"
-                      style={{ order: 0 }}
-                    >
-                      <Revista3D
-                        key={r.id}
-                        portadaPath={r.portada_path}
-                      />
-                      <h2 className="revista-coverflow-titulo">
-                        {r.titulo || `Edición ${r.numero_edicion}`}
-                      </h2>
-                      <button
-                        className="revista-add-btn revista-add-btn--3d"
-                        onClick={() => handleAdd(r.id)}
-                        disabled={hasInCart(r.id)}
-                        aria-label={
-                          hasInCart(r.id)
-                            ? 'Esta revista ya está en tu carrito'
-                            : `Agregar Edición ${r.numero_edicion} al carrito`
-                        }
-                      >
-                        {hasInCart(r.id) ? 'En el carrito' : 'Agregar al carrito'}
-                      </button>
-                    </div>
-                  );
-                }
-                return (
-                  <button
-                    key={r.id}
-                    type="button"
-                    className="revista-coverflow-item revista-coverflow-item--thumb"
-                    style={{ order: distance }}
-                    onClick={() => setCarouselIdx(idx)}
-                    aria-label={`Ver Edición ${r.numero_edicion}`}
-                  >
-                    {r.portada_path ? (
-                      <img
-                        src={r.portada_path}
-                        alt={`Edición ${r.numero_edicion}`}
-                        className="revista-coverflow-thumb-img"
-                        draggable={false}
-                      />
-                    ) : (
-                      <div className="revista-coverflow-thumb-empty">
-                        #{r.numero_edicion}
-                      </div>
-                    )}
-                    <span className="revista-coverflow-thumb-label">
-                      #{r.numero_edicion}
-                    </span>
-                  </button>
-                );
-              })}
+            <div className="revista-carousel">
+              {activas.length > 1 && (
+                <button
+                  type="button"
+                  className="revista-carousel-arrow revista-carousel-arrow--prev"
+                  onClick={goPrev}
+                  aria-label="Edición anterior"
+                >
+                  ←
+                </button>
+              )}
+              <div className="revista-item revista-item--3d">
+                <Revista3D
+                  key={current.id}
+                  portadaPath={current.portada_path}
+                />
+                <h2 className="revista-carousel-titulo">
+                  {current.titulo || `Edición ${current.numero_edicion}`}
+                </h2>
+                <button
+                  className="revista-add-btn revista-add-btn--3d"
+                  onClick={() => handleAdd(current.id)}
+                  disabled={hasInCart(current.id)}
+                  aria-label={
+                    hasInCart(current.id)
+                      ? 'Esta revista ya está en tu carrito'
+                      : `Agregar Edición ${current.numero_edicion} al carrito`
+                  }
+                >
+                  {hasInCart(current.id) ? 'En el carrito' : 'Agregar al carrito'}
+                </button>
+              </div>
+              {activas.length > 1 && (
+                <button
+                  type="button"
+                  className="revista-carousel-arrow revista-carousel-arrow--next"
+                  onClick={goNext}
+                  aria-label="Próxima edición"
+                >
+                  →
+                </button>
+              )}
+            </div>
+          )}
+          {activas.length > 1 && (
+            <div className="revista-carousel-dots" role="tablist">
+              {activas.map((r, i) => (
+                <button
+                  key={r.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={i === safeIdx}
+                  aria-label={`Edición ${r.numero_edicion}`}
+                  className={`revista-carousel-dot${
+                    i === safeIdx ? ' revista-carousel-dot--active' : ''
+                  }`}
+                  onClick={() => setCarouselIdx(i)}
+                />
+              ))}
             </div>
           )}
           {addError && <p className="cart-warning">{addError}</p>}

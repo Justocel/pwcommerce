@@ -2422,177 +2422,82 @@ footer p {
 }
 
 /* ============================================================================
- * Coverflow de revistas en la home pública — todas visibles al mismo tiempo,
- * la actual al centro grande con 3D, las demás como thumbnails 2D clickables.
+ * Carrusel de revistas en la home pública
  * ============================================================================ */
-.revista-coverflow {
+.revista-carousel {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--spacing-xl);
+  gap: var(--spacing-md);
   width: 100%;
   position: relative;
-  padding: 0 var(--spacing-lg);
 }
-
-.revista-coverflow-item {
+.revista-carousel .revista-item {
+  flex: 0 1 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--spacing-md);
-  transition: transform 0.35s ease, opacity 0.35s ease;
 }
-
-.revista-coverflow-item--current {
-  flex: 0 1 auto;
-}
-
-.revista-coverflow-titulo {
+.revista-carousel-titulo {
   color: var(--color-light);
   font: var(--font-size-lg) var(--font-family);
   margin: var(--spacing-sm) 0 0;
   text-align: center;
 }
-
-/* Thumbnails laterales: el botón sin estilo de botón, solo card. */
-.revista-coverflow-item--thumb {
-  flex: 0 0 auto;
+.revista-carousel-arrow {
   background: transparent;
-  border: none;
-  padding: 0;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  color: var(--color-light);
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-full);
   cursor: pointer;
-  opacity: 0.7;
-  transform: scale(0.9);
-}
-.revista-coverflow-item--thumb:hover,
-.revista-coverflow-item--thumb:focus-visible {
-  opacity: 1;
-  transform: scale(0.95);
-}
-
-.revista-coverflow-thumb-img,
-.revista-coverflow-thumb-empty {
-  width: 110px;
-  height: 155px;
-  object-fit: cover;
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-md);
-  background: var(--color-light);
-  color: var(--color-primary);
+  font-size: var(--font-size-lg);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: var(--font-size-lg);
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+.revista-carousel-arrow:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: var(--color-light);
+}
+.revista-carousel-arrow:active {
+  transform: scale(0.92);
+}
+.revista-carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-lg);
+}
+.revista-carousel-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.35);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.revista-carousel-dot:hover {
+  background: rgba(255, 255, 255, 0.6);
+}
+.revista-carousel-dot--active {
+  background: var(--color-light);
+  transform: scale(1.2);
 }
 
-.revista-coverflow-thumb-label {
-  color: var(--color-light);
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  opacity: 0.85;
-}
-
-@media (max-width: 700px) {
-  .revista-coverflow {
-    gap: var(--spacing-md);
-    padding: 0 var(--spacing-sm);
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
+@media (max-width: 640px) {
+  .revista-carousel-arrow {
+    width: 40px;
+    height: 40px;
+    font-size: var(--font-size-base);
   }
-  .revista-coverflow-item {
-    scroll-snap-align: center;
-  }
-  .revista-coverflow-thumb-img,
-  .revista-coverflow-thumb-empty {
-    width: 80px;
-    height: 113px;
-  }
-}
-
-/* ============================================================================
- * Hover-focus pattern (nivel 2): cuando hover sobre un item dentro de un
- * contenedor, los hermanos se atenúan y achican. Solo en devices con hover
- * real (mouse) — en touch lo skipeo para no romper la experiencia.
- * ============================================================================ */
-@media (hover: hover) {
-  /* Revistas — coverflow */
-  .revista-coverflow-item {
-    transition:
-      opacity 0.3s ease,
-      filter 0.3s ease,
-      transform 0.35s ease;
-  }
-  .revista-coverflow:hover .revista-coverflow-item:not(:hover) {
-    opacity: 0.55;
-    filter: grayscale(0.3);
-  }
-  .revista-coverflow:hover .revista-coverflow-item--current:not(:hover) {
-    transform: scale(0.96);
-  }
-  .revista-coverflow:hover .revista-coverflow-item--thumb:not(:hover) {
-    transform: scale(0.85);
-  }
-  .revista-coverflow-item--current:hover {
-    transform: scale(1.04);
-    z-index: 1;
-  }
-  .revista-coverflow-item--thumb:hover {
-    transform: scale(1);
-    opacity: 1;
-    z-index: 1;
-  }
-
-  /* Artículos */
-  .articulo-wrapper {
-    transition:
-      opacity 0.3s ease,
-      filter 0.3s ease,
-      transform 0.3s ease;
-  }
-  .articulos-container:hover .articulo-wrapper:not(:hover) {
-    opacity: 0.55;
-    filter: grayscale(0.3);
-    transform: scale(0.96);
-  }
-  .articulo-wrapper:hover {
-    transform: scale(1.04);
-    z-index: 1;
-  }
-
-  /* Eventos */
-  .evento {
-    transition:
-      opacity 0.3s ease,
-      filter 0.3s ease,
-      transform 0.3s ease;
-  }
-  .eventos-container:hover .evento:not(:hover) {
-    opacity: 0.55;
-    filter: grayscale(0.3);
-    transform: scale(0.96);
-  }
-  .evento:hover {
-    transform: scale(1.04);
-    z-index: 1;
-  }
-
-  /* Integrantes */
-  .integrante-wrapper {
-    transition:
-      opacity 0.3s ease,
-      filter 0.3s ease,
-      transform 0.3s ease;
-  }
-  .integrantes-container:hover .integrante-wrapper:not(:hover) {
-    opacity: 0.55;
-    filter: grayscale(0.3);
-    transform: scale(0.96);
-  }
-  .integrante-wrapper:hover {
-    transform: scale(1.04);
-    z-index: 1;
+  .revista-carousel {
+    gap: var(--spacing-xs);
   }
 }

@@ -1,11 +1,7 @@
 'use client';
 
 import { Canvas, useLoader } from '@react-three/fiber';
-import {
-  PresentationControls,
-  ContactShadows,
-  Float,
-} from '@react-three/drei';
+import { OrbitControls } from '@react-three/drei';
 import {
   TextureLoader,
   SRGBColorSpace,
@@ -34,6 +30,9 @@ const STATIC_TEXTURES = {
 };
 
 function MagazineMesh({ portadaPath }) {
+  // useLoader cachea por URL. Si portadaPath cambia (editor sube nueva portada),
+  // se trae la textura nueva y re-renderiza. Las texturas estáticas (lomo,
+  // contratapa, páginas) son placeholders compartidos entre todas las ediciones.
   const [portada, contraTex, lomoTex, pagH, pagV] = useLoader(
     TextureLoader,
     [
@@ -62,7 +61,7 @@ function MagazineMesh({ portadaPath }) {
   const maps = [pagH, lomoTex, pagV, pagV, portada, contraTex];
 
   return (
-    <mesh castShadow>
+    <mesh>
       <boxGeometry args={[W, H, D]} />
       {maps.map((m, i) => (
         <meshBasicMaterial
@@ -76,12 +75,6 @@ function MagazineMesh({ portadaPath }) {
   );
 }
 
-/**
- * Revista3D — estilo Stripe Press.
- * PresentationControls: el user arrastra para "espiarla", al soltar vuelve sola
- * con un resorte. Float agrega un cabeceo idle muy leve. ContactShadows pone
- * la sombra de contacto debajo para que se sienta apoyada y no flotando.
- */
 export default function Revista3D({ portadaPath }) {
   const reducedMotion = usePrefersReducedMotion();
 
@@ -89,35 +82,21 @@ export default function Revista3D({ portadaPath }) {
     <div className="revista-3d-canvas">
       <Canvas camera={{ position: [0, 0, 0.75], fov: 35 }} dpr={[1, 2]}>
         <Suspense fallback={null}>
-          <PresentationControls
-            global
-            cursor
-            snap
-            polar={[-Math.PI / 6, Math.PI / 6]}
-            azimuth={[-Math.PI / 3, Math.PI / 3]}
-            config={{ mass: 1, tension: 170, friction: 26 }}
-          >
-            <Float
-              speed={reducedMotion ? 0 : 1.4}
-              rotationIntensity={reducedMotion ? 0 : 0.25}
-              floatIntensity={reducedMotion ? 0 : 0.35}
-            >
-              {/* key fuerza re-mount cuando cambia la portada — evita problemas
-                  de cache de Suspense entre re-renders con distintos arrays. */}
-              <MagazineMesh
-                key={portadaPath || 'default'}
-                portadaPath={portadaPath}
-              />
-            </Float>
-          </PresentationControls>
-          <ContactShadows
-            position={[0, -0.17, 0]}
-            opacity={0.45}
-            scale={0.6}
-            blur={2.4}
-            far={0.4}
+          {/* key fuerza re-mount cuando cambia la portada — evita problemas de
+              cache de Suspense entre re-renders con distintos arrays de URLs */}
+          <MagazineMesh
+            key={portadaPath || 'default'}
+            portadaPath={portadaPath}
           />
         </Suspense>
+        <OrbitControls
+          enablePan={false}
+          enableZoom={false}
+          minDistance={0.3}
+          maxDistance={1.0}
+          autoRotate={!reducedMotion}
+          autoRotateSpeed={0.6}
+        />
       </Canvas>
     </div>
   );
