@@ -26,7 +26,7 @@ export function RevistasProvider({ children }) {
     let q = supabase
       .from('revistas')
       .select(
-        'id, numero_edicion, titulo, descripcion, portada_path, pdf_path, precio, fecha_lanzamiento, activa'
+        'id, numero_edicion, titulo, descripcion, portada_path, contraportada_path, color, pdf_path, precio, fecha_lanzamiento, activa'
       )
       .order('numero_edicion', { ascending: false });
     if (!isEditor) q = q.eq('activa', true);

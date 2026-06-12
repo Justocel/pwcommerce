@@ -27,6 +27,19 @@ function PicnicEscena() {
   const { editMode } = useEditMode();
 
   const sinClasificar = videos.filter((v) => v.seccion === null);
+  const graciasVisibles = videosBySeccion('gracias').filter((v) => v.visible);
+  const picnicVisibles = videosBySeccion('picnic').filter((v) => v.visible);
+
+  // En modo público: si las dos sub-secciones no tienen videos visibles,
+  // la sección entera no aparece. En edit mode siempre se muestra.
+  if (
+    !editMode &&
+    hydrated &&
+    graciasVisibles.length === 0 &&
+    picnicVisibles.length === 0
+  ) {
+    return null;
+  }
 
   const handleDelete = async (v) => {
     if (
@@ -129,8 +142,10 @@ function PicnicEscena() {
         )}
       </div>
 
-      {renderSubseccion(secciones.gracias, videosBySeccion('gracias'))}
-      {renderSubseccion(secciones.picnic, videosBySeccion('picnic'))}
+      {(editMode || graciasVisibles.length > 0) &&
+        renderSubseccion(secciones.gracias, videosBySeccion('gracias'))}
+      {(editMode || picnicVisibles.length > 0) &&
+        renderSubseccion(secciones.picnic, videosBySeccion('picnic'))}
 
       {editMode && sinClasificar.length > 0 && (
         <div className="subseccion subseccion--editor-only">

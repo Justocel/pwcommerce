@@ -3,12 +3,14 @@ import { classifyEvents, formatDate } from '../utils/utils';
 
 /**
  * COMPONENTE EVENTS
- * Renderiza dos secciones: eventos próximos y eventos pasados.
- * La fecha se muestra siempre (en pasados también, para que se sepa cuándo
- * ocurrió). Empty state cuando no hay eventos en alguna categoría.
+ * Renderiza eventos próximos y pasados como dos secciones separadas.
+ * Cada sub-sección se oculta si no tiene eventos; si ambas están vacías,
+ * el componente entero no renderiza nada (no hay edit mode para eventos).
  */
 function Events() {
   const { futuro, pasado } = classifyEvents(eventos);
+
+  if (futuro.length === 0 && pasado.length === 0) return null;
 
   const renderEvento = (evento) => (
     <div key={evento.id} className="evento">
@@ -20,43 +22,37 @@ function Events() {
 
   return (
     <>
-      <section
-        id={secciones.eventosProximos.id}
-        className="seccion-placeholder seccion-placeholder--alt seccion-eventos"
-      >
-        <div className="seccion-header">
-          <h1>{secciones.eventosProximos.titulo}</h1>
-          <p className="seccion-descripcion">
-            {secciones.eventosProximos.descripcion}
-          </p>
-        </div>
-        {futuro.length > 0 ? (
+      {futuro.length > 0 && (
+        <section
+          id={secciones.eventosProximos.id}
+          className="seccion-placeholder seccion-placeholder--alt seccion-eventos"
+        >
+          <div className="seccion-header">
+            <h1>{secciones.eventosProximos.titulo}</h1>
+            <p className="seccion-descripcion">
+              {secciones.eventosProximos.descripcion}
+            </p>
+          </div>
           <div className="eventos-container eventos-container--grid">
             {futuro.map(renderEvento)}
           </div>
-        ) : (
-          <p className="eventos-empty">
-            Pronto anunciamos los próximos. Seguinos en Instagram para enterarte.
-          </p>
-        )}
-      </section>
+        </section>
+      )}
 
-      <section
-        id={secciones.eventosPasados.id}
-        className="seccion-placeholder seccion-placeholder--alt seccion-eventos"
-      >
-        <div className="seccion-header">
-          <h1>{secciones.eventosPasados.titulo}</h1>
-          <p className="seccion-descripcion">
-            {secciones.eventosPasados.descripcion}
-          </p>
-        </div>
-        {pasado.length > 0 ? (
+      {pasado.length > 0 && (
+        <section
+          id={secciones.eventosPasados.id}
+          className="seccion-placeholder seccion-placeholder--alt seccion-eventos"
+        >
+          <div className="seccion-header">
+            <h1>{secciones.eventosPasados.titulo}</h1>
+            <p className="seccion-descripcion">
+              {secciones.eventosPasados.descripcion}
+            </p>
+          </div>
           <div className="eventos-container">{pasado.map(renderEvento)}</div>
-        ) : (
-          <p className="eventos-empty">Todavía no cubrimos ningún evento.</p>
-        )}
-      </section>
+        </section>
+      )}
     </>
   );
 }

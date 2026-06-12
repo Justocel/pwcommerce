@@ -35,6 +35,9 @@ function Integrantes() {
     return updateIntegrante(editing.id, form);
   };
 
+  const visiblesCount = integrantes.filter((i) => i.visible).length;
+  if (!editMode && hydrated && visiblesCount === 0) return null;
+
   return (
     <section
       id={secciones.equipo.id}

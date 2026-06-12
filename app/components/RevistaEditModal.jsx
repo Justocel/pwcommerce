@@ -29,6 +29,8 @@ export default function RevistaEditModal({
     titulo: revista?.titulo || '',
     descripcion: revista?.descripcion || '',
     portada_path: revista?.portada_path || '',
+    contraportada_path: revista?.contraportada_path || '',
+    color: revista?.color || '',
     precio: revista?.precio ?? 0,
     fecha_lanzamiento: revista?.fecha_lanzamiento || '',
     activa: revista?.activa ?? true,
@@ -59,6 +61,8 @@ export default function RevistaEditModal({
       titulo: form.titulo.trim(),
       descripcion: form.descripcion.trim() || null,
       portada_path: form.portada_path || null,
+      contraportada_path: form.contraportada_path || null,
+      color: form.color || null,
       precio: Number(form.precio) || 0,
       fecha_lanzamiento: form.fecha_lanzamiento || null,
       activa: !!form.activa,
@@ -154,6 +158,47 @@ export default function RevistaEditModal({
               folder="portadas"
             />
           </div>
+          <div className="auth-field">
+            <span>Contraportada</span>
+            <ImageUpload
+              value={form.contraportada_path}
+              onChange={(v) =>
+                setForm((f) => ({ ...f, contraportada_path: v || '' }))
+              }
+              folder="contraportadas"
+            />
+          </div>
+          <label className="auth-field">
+            <span>Color de identidad (HEX)</span>
+            <span className="revista-color-row">
+              <input
+                type="color"
+                value={form.color || '#a0263f'}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, color: e.target.value }))
+                }
+                aria-label="Elegir color"
+              />
+              <input
+                type="text"
+                value={form.color}
+                onChange={setField('color')}
+                placeholder="#A0263F"
+                maxLength={7}
+                pattern="^#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{6})$"
+              />
+              {form.color && (
+                <button
+                  type="button"
+                  className="revista-color-clear"
+                  onClick={() => setForm((f) => ({ ...f, color: '' }))}
+                  aria-label="Quitar color"
+                >
+                  Quitar
+                </button>
+              )}
+            </span>
+          </label>
           {!isNew && (
             <div className="auth-field">
               <span>PDF de la revista</span>

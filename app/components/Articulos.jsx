@@ -34,6 +34,11 @@ function Articulos() {
     return updateArticulo(editing.id, form);
   };
 
+  // En modo público, ocultar la sección entera si no hay artículos visibles.
+  // En edit mode se mantiene siempre visible para que el editor pueda crear el primero.
+  const visiblesCount = articulos.filter((a) => a.visible).length;
+  if (!editMode && hydrated && visiblesCount === 0) return null;
+
   return (
     <section
       id={secciones.articulos.id}

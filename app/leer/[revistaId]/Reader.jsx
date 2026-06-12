@@ -100,13 +100,18 @@ export default function LeerRevistaPage() {
     return () => window.removeEventListener('resize', update);
   }, []);
 
+  // Si la revista tiene contraportada, la mostramos como página extra al final.
+  const hasContraportada = !!revista?.contraportada_path;
+  const totalPages = numPages + (hasContraportada && numPages > 0 ? 1 : 0);
+  const showingContraportada = hasContraportada && page > numPages;
+
   const goPrev = useCallback(
     () => setPage((p) => Math.max(1, p - 1)),
     []
   );
   const goNext = useCallback(
-    () => setPage((p) => Math.min(numPages || 1, p + 1)),
-    [numPages]
+    () => setPage((p) => Math.min(totalPages || 1, p + 1)),
+    [totalPages]
   );
 
   useEffect(() => {
@@ -136,6 +141,7 @@ export default function LeerRevistaPage() {
     <div
       className="lector"
       onContextMenu={(e) => e.preventDefault()}
+      style={revista?.color ? { '--revista-color': revista.color } : undefined}
     >
       <header className="lector-header">
         <button
@@ -149,7 +155,7 @@ export default function LeerRevistaPage() {
           {revista?.titulo || 'Picnic'}
         </span>
         <span className="lector-page-indicator">
-          {numPages > 0 ? `${page} / ${numPages}` : '…'}
+          {totalPages > 0 ? `${page} / ${totalPages}` : '…'}
         </span>
       </header>
 
@@ -170,6 +176,14 @@ export default function LeerRevistaPage() {
           </div>
         ) : !pdfUrl ? (
           <div className="lector-msg">Cargando revista…</div>
+        ) : showingContraportada ? (
+          <img
+            src={revista.contraportada_path}
+            alt={`Contraportada — ${revista.titulo || `Edición ${revista.numero_edicion}`}`}
+            className="lector-contraportada"
+            style={{ width: width > 0 ? `${width}px` : '100%' }}
+            draggable={false}
+          />
         ) : (
           <Document
             file={pdfUrl}
@@ -200,7 +214,7 @@ export default function LeerRevistaPage() {
         </button>
         <button
           onClick={goNext}
-          disabled={numPages === 0 || page >= numPages || !pdfUrl}
+          disabled={totalPages === 0 || page >= totalPages || !pdfUrl}
         >
           Siguiente →
         </button>

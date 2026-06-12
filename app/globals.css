@@ -1535,9 +1535,14 @@ footer p {
   padding: 12px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  /* Color de identidad de la revista como margen. Si la revista no setea
+     --revista-color, queda transparente y se ve el fondo del lector. */
+  background: var(--revista-color, transparent);
+  transition: background-color 0.3s ease;
 }
 .lector-canvas-wrap .react-pdf__Page,
-.lector-canvas-wrap canvas {
+.lector-canvas-wrap canvas,
+.lector-canvas-wrap .lector-contraportada {
   max-width: 100%;
   height: auto !important;
   display: block;
@@ -2379,4 +2384,39 @@ footer p {
   margin-top: var(--spacing-md);
   font-size: var(--font-size-sm);
   opacity: 0.6;
+}
+
+/* ============================================================================
+ * RevistaEditModal — fila de color picker
+ * ============================================================================ */
+.revista-color-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+.revista-color-row input[type="color"] {
+  width: 44px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 6px;
+  cursor: pointer;
+  background: transparent;
+}
+.revista-color-row input[type="text"] {
+  flex: 1;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  text-transform: uppercase;
+}
+.revista-color-clear {
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  color: var(--color-dark);
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+}
+.revista-color-clear:hover {
+  background: rgba(0, 0, 0, 0.05);
 }
