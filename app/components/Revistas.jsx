@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { secciones } from '../data/data';
@@ -39,6 +39,8 @@ function Revistas() {
   const { editMode } = useEditMode();
   const [editing, setEditing] = useState(null); // null | 'new' | <revista>
   const [addError, setAddError] = useState('');
+  const [carouselIdx, setCarouselIdx] = useState(0);
+  const touchStartX = useRef(null);
 
   const handleAdd = async (revistaId) => {
     if (!user) {
@@ -91,7 +93,22 @@ function Revistas() {
   };
 
   const activas = revistas.filter((r) => r.activa);
-  const publicas = activas.slice(0, 1); // primera activa para vista pública
+
+  // Carrusel: clamp del índice por si la lista cambia (ej. desactivan una edición).
+  const safeIdx = activas.length === 0 ? 0 : Math.min(carouselIdx, activas.length - 1);
+  const current = activas[safeIdx] || null;
+  const goPrev = () =>
+    setCarouselIdx((i) => (i - 1 + activas.length) % activas.length);
+  const goNext = () => setCarouselIdx((i) => (i + 1) % activas.length);
+  const onTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const onTouchEnd = (e) => {
+    if (touchStartX.current == null || activas.length <= 1) return;
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    if (Math.abs(dx) > 60) (dx > 0 ? goPrev : goNext)();
+    touchStartX.current = null;
+  };
 
   return (
     <section
@@ -165,37 +182,83 @@ function Revistas() {
           ))}
         </div>
       ) : (
-        <div className="revistas-container revistas-container--3d">
+        <div
+          className="revistas-container revistas-container--3d"
+          onTouchStart={onTouchStart}
+          onTouchEnd={onTouchEnd}
+        >
           {!hydrated && (
             <div className="revista-item revista-item--3d">
               <Revista3D />
             </div>
           )}
-          {hydrated && publicas.length === 0 && (
+          {hydrated && activas.length === 0 && (
             <p className="seccion-descripcion">
               No hay revistas disponibles todavía.
             </p>
           )}
-          {publicas.map((revista) => {
-            const enCart = hasInCart(revista.id);
-            return (
-              <div key={revista.id} className="revista-item revista-item--3d">
-                <Revista3D portadaPath={revista.portada_path} />
+          {current && (
+            <div className="revista-carousel">
+              {activas.length > 1 && (
+                <button
+                  type="button"
+                  className="revista-carousel-arrow revista-carousel-arrow--prev"
+                  onClick={goPrev}
+                  aria-label="Edición anterior"
+                >
+                  ←
+                </button>
+              )}
+              <div className="revista-item revista-item--3d">
+                <Revista3D
+                  key={current.id}
+                  portadaPath={current.portada_path}
+                />
+                <h2 className="revista-carousel-titulo">
+                  {current.titulo || `Edición ${current.numero_edicion}`}
+                </h2>
                 <button
                   className="revista-add-btn revista-add-btn--3d"
-                  onClick={() => handleAdd(revista.id)}
-                  disabled={enCart}
+                  onClick={() => handleAdd(current.id)}
+                  disabled={hasInCart(current.id)}
                   aria-label={
-                    enCart
+                    hasInCart(current.id)
                       ? 'Esta revista ya está en tu carrito'
-                      : `Agregar Edición ${revista.numero_edicion} al carrito`
+                      : `Agregar Edición ${current.numero_edicion} al carrito`
                   }
                 >
-                  {enCart ? 'En el carrito' : 'Agregar al carrito'}
+                  {hasInCart(current.id) ? 'En el carrito' : 'Agregar al carrito'}
                 </button>
               </div>
-            );
-          })}
+              {activas.length > 1 && (
+                <button
+                  type="button"
+                  className="revista-carousel-arrow revista-carousel-arrow--next"
+                  onClick={goNext}
+                  aria-label="Próxima edición"
+                >
+                  →
+                </button>
+              )}
+            </div>
+          )}
+          {activas.length > 1 && (
+            <div className="revista-carousel-dots" role="tablist">
+              {activas.map((r, i) => (
+                <button
+                  key={r.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={i === safeIdx}
+                  aria-label={`Edición ${r.numero_edicion}`}
+                  className={`revista-carousel-dot${
+                    i === safeIdx ? ' revista-carousel-dot--active' : ''
+                  }`}
+                  onClick={() => setCarouselIdx(i)}
+                />
+              ))}
+            </div>
+          )}
           {addError && <p className="cart-warning">{addError}</p>}
         </div>
       )}

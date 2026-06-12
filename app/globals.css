@@ -2420,3 +2420,84 @@ footer p {
 .revista-color-clear:hover {
   background: rgba(0, 0, 0, 0.05);
 }
+
+/* ============================================================================
+ * Carrusel de revistas en la home pública
+ * ============================================================================ */
+.revista-carousel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  width: 100%;
+  position: relative;
+}
+.revista-carousel .revista-item {
+  flex: 0 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+.revista-carousel-titulo {
+  color: var(--color-light);
+  font: var(--font-size-lg) var(--font-family);
+  margin: var(--spacing-sm) 0 0;
+  text-align: center;
+}
+.revista-carousel-arrow {
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  color: var(--color-light);
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  font-size: var(--font-size-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+.revista-carousel-arrow:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: var(--color-light);
+}
+.revista-carousel-arrow:active {
+  transform: scale(0.92);
+}
+.revista-carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-lg);
+}
+.revista-carousel-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.35);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.revista-carousel-dot:hover {
+  background: rgba(255, 255, 255, 0.6);
+}
+.revista-carousel-dot--active {
+  background: var(--color-light);
+  transform: scale(1.2);
+}
+
+@media (max-width: 640px) {
+  .revista-carousel-arrow {
+    width: 40px;
+    height: 40px;
+    font-size: var(--font-size-base);
+  }
+  .revista-carousel {
+    gap: var(--spacing-xs);
+  }
+}
