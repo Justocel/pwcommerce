@@ -43,7 +43,19 @@ function MisRevistasContent() {
     );
   }
 
-  const items = purchases
+  // Solo revistas efectivamente compradas (estados de ownership) y deduplicadas
+  // por revista_id: si por algún motivo hay más de una pagada/completada/confirmada,
+  // mostramos solo la más reciente.
+  const OWNED_STATES = new Set(['completada', 'pagada', 'confirmada']);
+  const byRevista = new Map();
+  for (const compra of purchases) {
+    if (!OWNED_STATES.has(compra.estado)) continue;
+    const existing = byRevista.get(compra.revista_id);
+    if (!existing || existing.created_at < compra.created_at) {
+      byRevista.set(compra.revista_id, compra);
+    }
+  }
+  const items = Array.from(byRevista.values())
     .map((compra) => {
       const revista = getRevistaById(compra.revista_id);
       return revista

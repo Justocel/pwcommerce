@@ -65,8 +65,11 @@ export function PurchasesProvider({ children }) {
     return { data, error: null };
   };
 
+  // Solo cuenta como "comprada" si está en estado de ownership. Una purchase
+  // 'pendiente' (esperando webhook) o 'cancelada' no habilita acceso al PDF.
+  const OWNED_STATES = new Set(['completada', 'pagada', 'confirmada']);
   const hasPurchase = (revistaId) =>
-    purchases.some((p) => p.revista_id === revistaId);
+    purchases.some((p) => p.revista_id === revistaId && OWNED_STATES.has(p.estado));
 
   return (
     <PurchasesContext.Provider

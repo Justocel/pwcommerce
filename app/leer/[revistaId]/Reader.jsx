@@ -32,7 +32,11 @@ export default function LeerRevistaPage() {
   const touchStartX = useRef(null);
 
   const revista = revistas.find((r) => r.id === revistaId) || null;
-  const hasIt = purchases.some((p) => p.revista_id === revistaId);
+  const hasIt = purchases.some(
+    (p) =>
+      p.revista_id === revistaId &&
+      ['completada', 'pagada', 'confirmada'].includes(p.estado)
+  );
 
   // Resolver la signed URL una vez que tengamos todo cargado
   useEffect(() => {
